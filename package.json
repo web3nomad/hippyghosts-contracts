@@ -1,0 +1,21 @@
+{
+  "name": "hippyghosts-contracts",
+  "version": "0.0.1",
+  "description": "ETH gift card",
+  "author": "web3nomad",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.17.5 <15",
+    "npm": ">=7.20.6 <8",
+    "yarn": ">=1.22.1 <2"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": []
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
