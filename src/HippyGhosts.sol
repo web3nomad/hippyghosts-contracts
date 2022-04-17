@@ -45,14 +45,16 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /**
      * @dev Ether value for each token in public mint
      */
-    uint256 public publicMintPrice;
+    uint256 private publicMintPriceUpper = 0.08 ether;
+    uint256 private publicMintPriceLower = 0.04 ether;
+    uint256 private publicMintPriceDecay = 0.01 ether;
 
     /**
      * @dev Starting block and inverval for public mint
      */
-    uint256 private publicMintStartBlock;
-    uint256 private epochBlocks = 40000;
-    uint256 private ghostsPerEpoch = 300;
+    uint256 public publicMintStartBlock = 0;
+    uint256 private EPOCH_BLOCKS = 40000;
+    uint256 private GHOSTS_PER_EPOCH = 300;
 
     /**
      * @dev Index and upper bound for mint
@@ -210,12 +212,59 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
 
     /* public mint functions */
 
+    /**
+     *  @dev Epoch number start from 1, will increase every [EPOCH_BLOCKS] blocks
+     */
+    function _currentEpoch() internal view returns (uint256) {
+        if (publicMintStartBlock == 0 || publicMintStartBlock >= block.number) {
+            return 0;
+        }
+        uint256 epoches = (block.number - publicMintStartBlock) / EPOCH_BLOCKS;
+        return epoches + 1;
+    }
+
+    function _epochOfToken(uint256 tokenId) internal view returns (uint256) {
+        assert(tokenId > MAX_PRIVATE_MINT_INDEX);
+        uint256 epoches = (tokenId - MAX_PRIVATE_MINT_INDEX - 1) / GHOSTS_PER_EPOCH;
+        return epoches + 1;
+    }
+
+    // function ghostsReleased() public view returns (uint256) {
+    //     uint256 released = GHOSTS_PER_EPOCH * currentEpoch();
+    //     if (released > MAX_PUBLIC_MINT_INDEX - MAX_PRIVATE_MINT_INDEX) {
+    //         released = MAX_PUBLIC_MINT_INDEX - MAX_PRIVATE_MINT_INDEX;
+    //     }
+    //     return released;
+    // }
+
+    // function _ghostsMintedInPublic() internal view returns (uint256) {
+    //     return _publicMintIndex - MAX_PRIVATE_MINT_INDEX;
+    // }
+
+    // function _available() internal view returns (uint256) {
+    //     return ghostsReleased() - ghostsMintedInPublic();
+    // }
+
+    function _priceForTokenId(uint256 tokenId) internal view returns (uint256) {
+        uint256 currentEpoch = _currentEpoch();
+        uint256 epochOfToken = _epochOfToken(tokenId);
+        assert(epochOfToken > 0 && currentEpoch >= epochOfToken);
+        uint256 price = publicMintPriceUpper - (currentEpoch - epochOfToken) * publicMintPriceDecay;
+        if (price < publicMintPriceLower) {
+            price = publicMintPriceLower;
+        }
+        return price;
+    }
+
     function mint(uint256 numberOfTokens) public payable {
-        require(publicMintStartBlock > 0, "Public mint is not open");
+        require(publicMintStartBlock > 0 && block.number > publicMintStartBlock, "Public sale is not open");
         require(numberOfTokens <= 10, "Max ghosts to mint is 10");
-        require(publicMintPrice * numberOfTokens <= msg.value, "Incorrect ether value sent");
+        uint256 _etherValue = msg.value;
         for (uint256 i = 0; i < numberOfTokens; i++) {
             _publicMintIndex = _publicMintIndex + 1;
+            uint256 price = _priceForTokenId(_publicMintIndex);
+            _etherValue = _etherValue - price;
+            require(_etherValue >= 0, "Ether value not enough");
             _publicSafeMint(msg.sender, _publicMintIndex);
         }
     }
