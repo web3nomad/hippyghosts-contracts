@@ -45,25 +45,25 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /**
      * @dev Ether value for each token in public mint
      */
-    uint256 private publicMintPriceUpper = 0.08 ether;
-    uint256 private publicMintPriceLower = 0.04 ether;
-    uint256 private publicMintPriceDecay = 0.01 ether;
+    uint256 public publicMintPriceUpper = 0.08 ether;
+    uint256 public publicMintPriceLower = 0.04 ether;
+    uint256 public publicMintPriceDecay = 0.01 ether;
 
     /**
      * @dev Starting block and inverval for public mint
      */
     uint256 public publicMintStartBlock = 0;
-    uint256 private EPOCH_BLOCKS = 40000;
-    uint256 private GHOSTS_PER_EPOCH = 300;
+    uint256 public EPOCH_BLOCKS = 40000;
+    uint256 public GHOSTS_PER_EPOCH = 300;
 
     /**
      * @dev Index and upper bound for mint
      */
-    uint256 private constant MAX_OWNER_MINT_INDEX = 200;
-    uint256 private _privateMintIndex = 200;
-    uint256 private constant MAX_PRIVATE_MINT_INDEX = 1500;
-    uint256 private _publicMintIndex = 1500;
-    uint256 private constant MAX_PUBLIC_MINT_INDEX = 9999;
+    uint256 public constant MAX_OWNER_MINT_INDEX = 200;
+    uint256 public privateMintIndex = 200;
+    uint256 public constant MAX_PRIVATE_MINT_INDEX = 1500;
+    uint256 public publicMintIndex = 1500;
+    uint256 public constant MAX_PUBLIC_MINT_INDEX = 9999;
 
     /**
      * @dev Public address used to sign function calls parameters
@@ -177,12 +177,12 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
 
         for (uint256 i = 0; i < numberOfTokens; i++) {
             // count to next index before minting
-            _privateMintIndex = _privateMintIndex + 1;
-            while (_ownerOf[_privateMintIndex] != address(0)) {
+            privateMintIndex = privateMintIndex + 1;
+            while (_ownerOf[privateMintIndex] != address(0)) {
                 // skip tokenId minted in mintMultipleTokensWithSignature
-                _privateMintIndex = _privateMintIndex + 1;
+                privateMintIndex = privateMintIndex + 1;
             }
-            _privateSafeMint(msg.sender, _privateMintIndex);
+            _privateSafeMint(msg.sender, privateMintIndex);
         }
     }
 
@@ -215,15 +215,15 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /**
      *  @dev Epoch number start from 1, will increase every [EPOCH_BLOCKS] blocks
      */
-    function _currentEpoch() internal view returns (uint256) {
-        if (publicMintStartBlock == 0 || publicMintStartBlock >= block.number) {
+    function currentEpoch() public view returns (uint256) {
+        if (publicMintStartBlock == 0 || block.number < publicMintStartBlock) {
             return 0;
         }
         uint256 epoches = (block.number - publicMintStartBlock) / EPOCH_BLOCKS;
         return epoches + 1;
     }
 
-    function _epochOfToken(uint256 tokenId) internal view returns (uint256) {
+    function epochOfToken(uint256 tokenId) public view returns (uint256) {
         assert(tokenId > MAX_PRIVATE_MINT_INDEX);
         uint256 epoches = (tokenId - MAX_PRIVATE_MINT_INDEX - 1) / GHOSTS_PER_EPOCH;
         return epoches + 1;
@@ -238,18 +238,19 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     // }
 
     // function _ghostsMintedInPublic() internal view returns (uint256) {
-    //     return _publicMintIndex - MAX_PRIVATE_MINT_INDEX;
+    //     return publicMintIndex - MAX_PRIVATE_MINT_INDEX;
     // }
 
     // function _available() internal view returns (uint256) {
     //     return ghostsReleased() - ghostsMintedInPublic();
     // }
 
-    function _priceForTokenId(uint256 tokenId) internal view returns (uint256) {
-        uint256 currentEpoch = _currentEpoch();
-        uint256 epochOfToken = _epochOfToken(tokenId);
-        assert(epochOfToken > 0 && currentEpoch >= epochOfToken);
-        uint256 price = publicMintPriceUpper - (currentEpoch - epochOfToken) * publicMintPriceDecay;
+    function priceForTokenId(uint256 tokenId) public view returns (uint256) {
+        uint256 cEpoch = currentEpoch();
+        uint256 tEpoch = epochOfToken(tokenId);
+        assert(tEpoch > 0);
+        require(cEpoch >= tEpoch, "Target epoch is not open");
+        uint256 price = publicMintPriceUpper - (cEpoch - tEpoch) * publicMintPriceDecay;
         if (price < publicMintPriceLower) {
             price = publicMintPriceLower;
         }
@@ -257,15 +258,18 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     }
 
     function mint(uint256 numberOfTokens) public payable {
-        require(publicMintStartBlock > 0 && block.number > publicMintStartBlock, "Public sale is not open");
+        require(publicMintStartBlock > 0 && block.number >= publicMintStartBlock, "Public sale is not open");
         require(numberOfTokens <= 10, "Max ghosts to mint is 10");
         uint256 _etherValue = msg.value;
         for (uint256 i = 0; i < numberOfTokens; i++) {
-            _publicMintIndex = _publicMintIndex + 1;
-            uint256 price = _priceForTokenId(_publicMintIndex);
+            publicMintIndex = publicMintIndex + 1;
+            uint256 price = priceForTokenId(publicMintIndex);
+            require(_etherValue >= price, "Ether value not enough");
             _etherValue = _etherValue - price;
-            require(_etherValue >= 0, "Ether value not enough");
-            _publicSafeMint(msg.sender, _publicMintIndex);
+            _publicSafeMint(msg.sender, publicMintIndex);
+        }
+        if (_etherValue > 0) {
+            payable(msg.sender).transfer(_etherValue);
         }
     }
 
