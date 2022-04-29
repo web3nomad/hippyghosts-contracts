@@ -19,7 +19,7 @@ import "./libraries/SignatureVerification.sol";
  * Total 9999 Hippy Ghosts
  * ----------------------------------------------------------------------------
  * 1 |  200 | [1,200]     | 1/1 ghosts, kept for team
- * 2 | 1300 | [201,1500]  | private mint, 100 for team, 1200 for community
+ * 2 | 1300 | [201,1500]  | private mint, 300 for team, 1000 for community
  * 3 | 8499 | [1501,9999] | public mint, release 300 ghosts every 40000 blocks
  * ----------------------------------------------------------------------------
  */

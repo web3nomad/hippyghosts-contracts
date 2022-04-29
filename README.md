@@ -18,8 +18,18 @@ forge build
 
 ### Test
 
+Run test with `-vv` to print logs
+
 ```bash
-forge test
+forge test -vv
+```
+
+### Gas report
+
+Run testMintGasReport to mint 1 token and generate gas report for minting
+
+```bash
+forge test --match-test testMintGasReport --gas-report
 ```
 
 ### Install

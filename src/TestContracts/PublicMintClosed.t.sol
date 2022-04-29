@@ -38,4 +38,12 @@ contract HippyGhostsTest is Test {
         assertEq(address(hippyGhosts).balance, 0.08 ether * 10);
     }
 
+    function testMintGasReport() public {
+        hippyGhosts.setPublicMintStartBlock(100);
+        vm.prank(EOA1, EOA1);
+        hippyGhosts.mint{value: 0.08 ether}(1);
+        assertEq(hippyGhosts.balanceOf(EOA1), 1);
+        assertEq(address(hippyGhosts).balance, 0.08 ether);
+    }
+
 }
