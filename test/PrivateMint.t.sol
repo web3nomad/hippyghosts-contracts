@@ -3,7 +3,7 @@ pragma solidity 0.8.11;
 
 import "forge-std/Test.sol";
 import "openzeppelin-contracts/utils/cryptography/ECDSA.sol";
-import "../HippyGhosts.sol";
+import "../src/HippyGhosts.sol";
 
 
 contract HippyGhostsTest is Test {
