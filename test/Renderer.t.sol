@@ -14,7 +14,7 @@ contract HippyGhostsTest is Test {
 
     function setUp() public {
         renderer = new HippyGhostsRenderer("prefix1/");
-        hippyGhosts = new HippyGhosts(renderer, address(0));
+        hippyGhosts = new HippyGhosts(address(renderer), address(0));
         // open public mint
         hippyGhosts.setPublicMintStartBlock(100);
         vm.roll(100);
@@ -43,7 +43,7 @@ contract HippyGhostsTest is Test {
         uint256 tokenId = _mint();
         // change renderer
         HippyGhostsRenderer _renderer = new HippyGhostsRenderer("prefix2/");
-        hippyGhosts.setRenderer(_renderer);
+        hippyGhosts.setRenderer(address(_renderer));
         assertEq(hippyGhosts.tokenURI(tokenId), "prefix2/1501");
         // new token
         tokenId = _mint();

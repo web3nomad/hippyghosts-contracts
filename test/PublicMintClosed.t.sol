@@ -3,6 +3,7 @@ pragma solidity 0.8.11;
 
 import "forge-std/Test.sol";
 import "../src/HippyGhosts.sol";
+import "../src/HippyGhostsRenderer.sol";
 
 
 contract HippyGhostsTest is Test {
@@ -11,7 +12,7 @@ contract HippyGhostsTest is Test {
 
     function setUp() public {
         HippyGhostsRenderer renderer = new HippyGhostsRenderer("");
-        hippyGhosts = new HippyGhosts(renderer, address(0));
+        hippyGhosts = new HippyGhosts(address(renderer), address(0));
         vm.roll(100);
         vm.deal(EOA1, 10 ether);
     }

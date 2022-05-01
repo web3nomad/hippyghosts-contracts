@@ -18,7 +18,7 @@ contract HippyGhostsTest is Test {
     function setUp() public {
         HippyGhostsRenderer renderer = new HippyGhostsRenderer("");
         address verificationAddress = vm.addr(VERIFICATION_PRIVATE_KEY);
-        hippyGhosts = new HippyGhosts(renderer, verificationAddress);
+        hippyGhosts = new HippyGhosts(address(renderer), verificationAddress);
         // hippyGhosts.setVerificationAddress(verificationAddress);
     }
 

@@ -5,7 +5,6 @@ import "solmate/tokens/ERC721.sol";
 import "openzeppelin-contracts/interfaces/IERC20.sol";
 import "openzeppelin-contracts/interfaces/IERC2981.sol";
 import "openzeppelin-contracts/access/Ownable.sol";
-import "./HippyGhostsRenderer.sol";
 import "./libraries/SignatureVerification.sol";
 
 /**
@@ -33,7 +32,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /**
      *  @dev renderer for {IERC721Metadata-tokenURI}
      */
-    HippyGhostsRenderer public renderer;
+    address public renderer;
 
     /**
      * @dev See {IERC721Enumerable-totalSupply}
@@ -94,7 +93,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      ****************************************/
 
     constructor(
-        HippyGhostsRenderer renderer_,
+        address renderer_,
         address verificationAddress_
     ) ERC721("Hippy Ghosts", "GHOST") {
         renderer = renderer_;
@@ -110,7 +109,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
         publicMintStartBlock = publicMintStartBlock_;
     }
 
-    function setRenderer(HippyGhostsRenderer renderer_) external onlyOwner {
+    function setRenderer(address renderer_) external onlyOwner {
         renderer = renderer_;
     }
 
@@ -279,7 +278,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      */
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_ownerOf[tokenId] != address(0), "ERC721Metadata: URI query for nonexistent token");
-        return renderer.tokenURI(tokenId);
+        return IRenderer(renderer).tokenURI(tokenId);
     }
 
     /**
@@ -318,4 +317,8 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
         token.transfer(msg.sender, balance);
     }
 
+}
+
+interface IRenderer {
+    function tokenURI(uint256 tokenId) external view returns (string memory);
 }
