@@ -3,4 +3,4 @@ src = 'src'
 test = 'test'
 out = 'out'
 libs = ['lib']
-gas_reports = ['HippyGhosts']
+gas_reports = ['HippyGhosts', 'HippyGhostsMinter', 'HippyGhostsRenderer']

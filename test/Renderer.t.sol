@@ -4,19 +4,23 @@ pragma solidity 0.8.11;
 import "forge-std/Test.sol";
 import "../src/HippyGhosts.sol";
 import "../src/HippyGhostsRenderer.sol";
+import "../src/HippyGhostsMinter.sol";
 
 
-contract HippyGhostsTest is Test {
+contract RendererTest is Test {
     HippyGhostsRenderer renderer;
+    HippyGhostsMinter mintController;
     HippyGhosts hippyGhosts;
     address constant EOA1 = address(uint160(uint256(keccak256('user account 1'))));
     address constant EOA2 = address(uint160(uint256(keccak256('user account 2'))));
 
     function setUp() public {
+        hippyGhosts = new HippyGhosts();
         renderer = new HippyGhostsRenderer("prefix1/");
-        hippyGhosts = new HippyGhosts(address(renderer), address(0));
+        mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
+        hippyGhosts.setParams(address(renderer), address(mintController));
         // open public mint
-        hippyGhosts.setPublicMintStartBlock(100);
+        mintController.setPublicMintStartBlock(100);
         vm.roll(100);
         vm.deal(EOA1, 10 ether);
         vm.deal(EOA2, 10 ether);
@@ -26,7 +30,7 @@ contract HippyGhostsTest is Test {
     function _mint() private returns (uint256) {
         _tokenId += 1;
         vm.prank(EOA1, EOA1);
-        hippyGhosts.mint{value: 0.08 ether}(1);
+        mintController.mint{value: 0.08 ether}(1);
         assertEq(hippyGhosts.ownerOf(_tokenId), EOA1);
         return _tokenId;
     }
@@ -43,7 +47,7 @@ contract HippyGhostsTest is Test {
         uint256 tokenId = _mint();
         // change renderer
         HippyGhostsRenderer _renderer = new HippyGhostsRenderer("prefix2/");
-        hippyGhosts.setRenderer(address(_renderer));
+        hippyGhosts.setParams(address(_renderer), hippyGhosts.mintController());
         assertEq(hippyGhosts.tokenURI(tokenId), "prefix2/1501");
         // new token
         tokenId = _mint();
@@ -63,7 +67,7 @@ contract HippyGhostsTest is Test {
          * IMPORTANT: selfdestruct will destruct contract after transaction is complete,
          * so there won't be error next line
          */
-        // hippyGhosts.setRenderer(HippyGhostsRenderer(address(0)));
+        // hippyGhosts.setParams(address(0), hippyGhosts.mintController());
         // vm.expectRevert();
         // string memory uri = hippyGhosts.tokenURI(tokenId);
         // emit log(uri);

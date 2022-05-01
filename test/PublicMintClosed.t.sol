@@ -4,15 +4,20 @@ pragma solidity 0.8.11;
 import "forge-std/Test.sol";
 import "../src/HippyGhosts.sol";
 import "../src/HippyGhostsRenderer.sol";
+import "../src/HippyGhostsMinter.sol";
 
 
-contract HippyGhostsTest is Test {
+contract PublicMintClosedTest is Test {
+    HippyGhostsRenderer renderer;
+    HippyGhostsMinter mintController;
     HippyGhosts hippyGhosts;
     address constant EOA1 = address(uint160(uint256(keccak256('user account 1'))));
 
     function setUp() public {
-        HippyGhostsRenderer renderer = new HippyGhostsRenderer("");
-        hippyGhosts = new HippyGhosts(address(renderer), address(0));
+        hippyGhosts = new HippyGhosts();
+        renderer = new HippyGhostsRenderer("");
+        mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
+        hippyGhosts.setParams(address(renderer), address(mintController));
         vm.roll(100);
         vm.deal(EOA1, 10 ether);
     }
@@ -21,31 +26,31 @@ contract HippyGhostsTest is Test {
         // emit log_uint(block.number);
         vm.prank(EOA1, EOA1);
         vm.expectRevert("Public sale is not open");
-        hippyGhosts.mint(1);
+        mintController.mint(1);
     }
 
     function testStartBlockNotReach() public {
-        hippyGhosts.setPublicMintStartBlock(200);  // set block number to 100 blocks later
+        mintController.setPublicMintStartBlock(200);  // set block number to 100 blocks later
         vm.prank(EOA1, EOA1);
         vm.expectRevert("Public sale is not open");
-        hippyGhosts.mint(1);
+        mintController.mint(1);
     }
 
     function testMintSuccess() public {
-        hippyGhosts.setPublicMintStartBlock(200);
+        mintController.setPublicMintStartBlock(200);
         vm.roll(201);
         vm.prank(EOA1, EOA1);
-        hippyGhosts.mint{value: 0.08 ether * 10}(10);
+        mintController.mint{value: 0.08 ether * 10}(10);
         assertEq(hippyGhosts.balanceOf(EOA1), 10);
-        assertEq(address(hippyGhosts).balance, 0.08 ether * 10);
+        assertEq(address(mintController).balance, 0.08 ether * 10);
     }
 
     function testMintGasReport() public {
-        hippyGhosts.setPublicMintStartBlock(100);
+        mintController.setPublicMintStartBlock(100);
         vm.prank(EOA1, EOA1);
-        hippyGhosts.mint{value: 0.08 ether}(1);
+        mintController.mint{value: 0.08 ether}(1);
         assertEq(hippyGhosts.balanceOf(EOA1), 1);
-        assertEq(address(hippyGhosts).balance, 0.08 ether);
+        assertEq(address(mintController).balance, 0.08 ether);
     }
 
 }
