@@ -4,8 +4,8 @@ pragma solidity 0.8.11;
 import "solmate/tokens/ERC721.sol";
 import "openzeppelin-contracts/interfaces/IERC20.sol";
 import "openzeppelin-contracts/interfaces/IERC2981.sol";
-import "openzeppelin-contracts/utils/Strings.sol";
 import "openzeppelin-contracts/access/Ownable.sol";
+import "./HippyGhostsRenderer.sol";
 import "./libraries/SignatureVerification.sol";
 
 /**
@@ -25,22 +25,21 @@ import "./libraries/SignatureVerification.sol";
  */
 
 contract HippyGhosts is ERC721, IERC2981, Ownable {
-    using Strings for uint256;
 
     /****************************************
      * Variables
      ****************************************/
 
     /**
+     *  @dev renderer for {IERC721Metadata-tokenURI}
+     */
+    HippyGhostsRenderer public renderer;
+
+    /**
      * @dev See {IERC721Enumerable-totalSupply}
      * IERC721Enumerable is not implemented in this contract except totalSupply
      */
     uint256 public totalSupply;
-
-    /**
-     *  @dev Base URI for {IERC721Metadata-tokenURI}
-     */
-    string public baseURI;
 
     /**
      * @dev Ether value for each token in public mint
@@ -95,10 +94,10 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      ****************************************/
 
     constructor(
-        string memory baseURI_,
+        HippyGhostsRenderer renderer_,
         address verificationAddress_
     ) ERC721("Hippy Ghosts", "GHOST") {
-        baseURI = baseURI_;
+        renderer = renderer_;
         _verificationAddress = verificationAddress_;
     }
 
@@ -111,8 +110,8 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
         publicMintStartBlock = publicMintStartBlock_;
     }
 
-    function setBaseURI(string memory baseURI_) external onlyOwner {
-        baseURI = baseURI_;
+    function setRenderer(HippyGhostsRenderer renderer_) external onlyOwner {
+        renderer = renderer_;
     }
 
     function setVerificationAddress(address verificationAddress_) external onlyOwner {
@@ -278,9 +277,9 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_ownerOf[tokenId] != address(0), "ERC721Metadata: URI query for nonexistent token");
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+        return renderer.tokenURI(tokenId);
     }
 
     /**

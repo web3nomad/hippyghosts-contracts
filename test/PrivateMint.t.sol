@@ -4,6 +4,7 @@ pragma solidity 0.8.11;
 import "forge-std/Test.sol";
 import "openzeppelin-contracts/utils/cryptography/ECDSA.sol";
 import "../src/HippyGhosts.sol";
+import "../src/HippyGhostsRenderer.sol";
 
 
 contract HippyGhostsTest is Test {
@@ -15,8 +16,9 @@ contract HippyGhostsTest is Test {
     address constant EOA2 = address(uint160(uint256(keccak256('user account 2'))));
 
     function setUp() public {
+        HippyGhostsRenderer renderer = new HippyGhostsRenderer("");
         address verificationAddress = vm.addr(VERIFICATION_PRIVATE_KEY);
-        hippyGhosts = new HippyGhosts("", verificationAddress);
+        hippyGhosts = new HippyGhosts(renderer, verificationAddress);
         // hippyGhosts.setVerificationAddress(verificationAddress);
     }
 

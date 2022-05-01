@@ -14,7 +14,8 @@ contract HippyGhostsTest is Test {
     uint256 constant BASE_BLOCK = 10000000;
 
     function setUp() public {
-        hippyGhosts = new HippyGhosts("", 0x0000000000000000000000000000000000000000);
+        HippyGhostsRenderer renderer = new HippyGhostsRenderer("");
+        hippyGhosts = new HippyGhosts(renderer, address(0));
         vm.roll(BASE_BLOCK - 10000);
         hippyGhosts.setPublicMintStartBlock(BASE_BLOCK + 1);
         vm.deal(EOA1, 10000 ether);

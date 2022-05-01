@@ -10,7 +10,8 @@ contract HippyGhostsTest is Test {
     address constant EOA1 = address(uint160(uint256(keccak256('user account 1'))));
 
     function setUp() public {
-        hippyGhosts = new HippyGhosts("", 0x0000000000000000000000000000000000000000);
+        HippyGhostsRenderer renderer = new HippyGhostsRenderer("");
+        hippyGhosts = new HippyGhosts(renderer, address(0));
         vm.roll(100);
         vm.deal(EOA1, 10 ether);
     }
