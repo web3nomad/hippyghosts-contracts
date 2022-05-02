@@ -17,8 +17,8 @@ pragma solidity 0.8.11;
  * ----------------------------------------------------------------------------
  */
 
-import "openzeppelin-contracts/interfaces/IERC20.sol";
-import "openzeppelin-contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./libraries/SignatureVerification.sol";
 
 contract HippyGhostsMinter is Ownable {
@@ -245,5 +245,4 @@ contract HippyGhostsMinter is Ownable {
 
 interface IHippyGhosts {
     function mint(address to, uint256 tokenId) external;
-    function exists(uint256 tokenId) external view returns (bool);
 }

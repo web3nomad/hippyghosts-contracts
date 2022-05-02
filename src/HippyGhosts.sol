@@ -11,10 +11,10 @@ pragma solidity 0.8.11;
  *
  */
 
-import "solmate/tokens/ERC721.sol";
-import "openzeppelin-contracts/interfaces/IERC20.sol";
-import "openzeppelin-contracts/interfaces/IERC2981.sol";
-import "openzeppelin-contracts/access/Ownable.sol";
+import "./ERC721.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./HippyGhostsMinter.sol";
 import "./HippyGhostsRenderer.sol";
 
@@ -65,10 +65,6 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     }
 
     /* mint logic */
-
-    function exists(uint256 tokenId) external view returns (bool) {
-        return _ownerOf[tokenId] != address(0);
-    }
 
     function mint(address to, uint256 tokenId) external {
         require(msg.sender == mintController, "caller is not the mint controller");

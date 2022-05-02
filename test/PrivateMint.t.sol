@@ -2,7 +2,7 @@
 pragma solidity 0.8.11;
 
 import "forge-std/Test.sol";
-import "openzeppelin-contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../src/HippyGhosts.sol";
 import "../src/HippyGhostsRenderer.sol";
 import "../src/HippyGhostsMinter.sol";

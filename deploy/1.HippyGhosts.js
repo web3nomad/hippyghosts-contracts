@@ -8,19 +8,19 @@ module.exports = async ({
     whitelistVerificationAddress,
   } = await getNamedAccounts();
 
-  let baseURI = 'https://hippyghosts.io/~/storage/tokens/test/';
+  let baseURI = 'https://api.hippyghosts.io/~/storage/tokens/test/';
 
   await deploy('HippyGhosts', {
     from: deployer,
     log: true,
     args: [
-      // baseURI,
-      // whitelistVerificationAddress,
+       baseURI,
+       whitelistVerificationAddress,
     ],
   });
 
+  /*
   const HippyGhosts = await deployments.get('HippyGhosts');
-
   await deploy('HippyGhostsRenderer', {
     from: deployer,
     log: true,
@@ -29,7 +29,6 @@ module.exports = async ({
       baseURI,
     ],
   });
-
   await deploy('HippyGhostsMinter', {
     from: deployer,
     log: true,
@@ -38,6 +37,7 @@ module.exports = async ({
       whitelistVerificationAddress,
     ],
   });
+  */
 
 }
 
