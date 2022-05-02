@@ -1,0 +1,17 @@
+{
+  "name": "hippyghosts-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@web3.github.com:web3nomad/hippyghosts-contracts.git",
+  "author": "web3nomad.eth <me@web3nomad.eth>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "dotenv": "^16.0.0",
+    "ethers": "^5.6.4",
+    "hardhat": "^2.9.3",
+    "hardhat-deploy": "^0.11.4",
+    "hardhat-deploy-ethers": "^0.3.0-beta.13"
+  }
+}
