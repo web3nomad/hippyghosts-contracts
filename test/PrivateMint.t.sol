@@ -62,18 +62,15 @@ contract PrivateMintTest is Test {
     function testTokenIdSequence() public {
         // specific token mint 1
         {
+            address[] memory addresses = new address[](3);
             uint256[] memory tokenIds = new uint256[](3);
+            addresses[0] = EOA1;
+            addresses[1] = EOA1;
+            addresses[2] = EOA1;
             tokenIds[0] = 202;
             tokenIds[1] = 204;
             tokenIds[2] = 205;
-            uint256 valueInWei = 0.04 ether;
-            address mintKey = 0x0000000000000000000000000000000000000001;
-            bytes memory data = abi.encodePacked(
-                EOA1, tokenIds, valueInWei, mintKey, address(mintController));
-            bytes memory signature = _sign(data);
-            hoax(EOA1, 10 ether);
-            mintController.mintMultipleTokensWithSignature{ value: valueInWei }(
-                tokenIds, valueInWei, mintKey, signature);
+            mintController.ownerMint(addresses, tokenIds);
             assertEq(hippyGhosts.ownerOf(202), EOA1);
             assertEq(hippyGhosts.ownerOf(204), EOA1);
             assertEq(hippyGhosts.ownerOf(205), EOA1);
@@ -117,19 +114,6 @@ contract PrivateMintTest is Test {
         hoax(EOA1, 10 ether);
         mintController.mintWithSignature{ value: valueInWei }(
             numberOfTokens, valueInWei, mintKey, signature);
-    }
-
-    function testMintMultipleTokensWithSignature_Report() public {
-        uint256[] memory tokenIds = new uint256[](1);
-        tokenIds[0] = 1;
-        uint256 valueInWei = 0.04 ether;
-        address mintKey = 0x0000000000000000000000000000000000000001;
-        bytes memory data = abi.encodePacked(
-            EOA1, tokenIds, valueInWei, mintKey, address(mintController));
-        bytes memory signature = _sign(data);
-        hoax(EOA1, 10 ether);
-        mintController.mintMultipleTokensWithSignature{ value: valueInWei }(
-            tokenIds, valueInWei, mintKey, signature);
     }
 
 }

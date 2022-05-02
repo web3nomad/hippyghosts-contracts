@@ -161,34 +161,10 @@ contract HippyGhostsMinter is Ownable {
             // count to next index before minting
             privateMintIndex = privateMintIndex + 1;
             while (hippyGhosts.exists(privateMintIndex)) {
-                // skip tokenId minted in mintMultipleTokensWithSignature
+                // skip tokenId minted in ownerMint
                 privateMintIndex = privateMintIndex + 1;
             }
             _privateSafeMint(msg.sender, privateMintIndex);
-        }
-    }
-
-    function mintMultipleTokensWithSignature(
-        uint256[] memory tokenIds,
-        uint256 valueInWei,
-        address mintKey,
-        bytes memory signature
-    ) external payable {
-        require(valueInWei == msg.value, "Incorrect ether value sent");
-        require(_claimedMintKeys[mintKey] == false, "Mint key already claimed");
-
-        SignatureVerification.requireValidSignature(
-            abi.encodePacked(msg.sender, tokenIds, valueInWei, mintKey, this),
-            signature,
-            verificationAddress
-        );
-
-        _claimedMintKeys[mintKey] = true;
-        emit MintKeyClaimed(msg.sender, mintKey, tokenIds.length);
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            uint256 tokenId = tokenIds[i];
-            _privateSafeMint(msg.sender, tokenId);
         }
     }
 
