@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "openzeppelin-contracts/interfaces/IERC20.sol";
-import "openzeppelin-contracts/access/Ownable.sol";
-import "./libraries/SignatureVerification.sol";
-
 /**
  *   _    _ _____ _____  _______     __   _____ _    _  ____   _____ _______ _____
  *  | |  | |_   _|  __ \|  __ \ \   / /  / ____| |  | |/ __ \ / ____|__   __/ ____|
@@ -20,6 +16,10 @@ import "./libraries/SignatureVerification.sol";
  * 3 | 8499 | [1501,9999] | public mint, release 300 ghosts every 40000 blocks
  * ----------------------------------------------------------------------------
  */
+
+import "openzeppelin-contracts/interfaces/IERC20.sol";
+import "openzeppelin-contracts/access/Ownable.sol";
+import "./libraries/SignatureVerification.sol";
 
 contract HippyGhostsMinter is Ownable {
 
@@ -46,9 +46,15 @@ contract HippyGhostsMinter is Ownable {
     /**
      * @dev Index and upper bound for mint
      */
-    uint256 public constant MAX_OWNER_MINT_INDEX = 200;
+    // general
+    uint256 public constant MAX_GHOSTS_PER_MINT = 10;
+    // team
+    uint256 public ownerMintCount = 0;
+    uint256 public constant MAX_OWNER_MINT_COUNT = 200;
+    // private
     uint256 public privateMintIndex = 200;
     uint256 public constant MAX_PRIVATE_MINT_INDEX = 1500;
+    // public
     uint256 public publicMintIndex = 1500;
     uint256 public constant MAX_PUBLIC_MINT_INDEX = 9999;
 
@@ -114,32 +120,22 @@ contract HippyGhostsMinter is Ownable {
     //     return success && (abi.decode(result, (address)) != address(0));
     // }
 
-    function _ownerSafeMint(address to, uint256 tokenId) internal {
-        require(tokenId <= MAX_OWNER_MINT_INDEX, "Incorrect tokenId to mint");
-        hippyGhosts.mint(to, tokenId);
-    }
-
     function _privateSafeMint(address to, uint256 tokenId) internal {
         require(tokenId <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
-        hippyGhosts.mint(to, tokenId);
-    }
-
-    function _publicSafeMint(address to, uint256 tokenId) internal {
-        require(tokenId <= MAX_PUBLIC_MINT_INDEX, "Incorrect tokenId to mint");
         hippyGhosts.mint(to, tokenId);
     }
 
     /* private mint functions */
 
     function ownerMint(
-        uint256[] calldata tokenIds,
-        address[] calldata addresses
+        address[] calldata addresses,
+        uint256[] calldata tokenIds
     ) external onlyOwner {
-        require(tokenIds.length == addresses.length, "Length of tokenIds and addresses are different");
+        ownerMintCount = ownerMintCount + tokenIds.length;
+        require(ownerMintCount <= MAX_OWNER_MINT_COUNT, "Not enough ghosts remaining to mint");
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            uint256 tokenId = tokenIds[i];
-            address destination = addresses[i];
-            _ownerSafeMint(destination, tokenId);
+            require(tokenIds[i] <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
+            hippyGhosts.mint(addresses[i], tokenIds[i]);
         }
     }
 
@@ -245,14 +241,15 @@ contract HippyGhostsMinter is Ownable {
 
     function mint(uint256 numberOfTokens) external payable {
         require(publicMintStartBlock > 0 && block.number >= publicMintStartBlock, "Public sale is not open");
-        require(numberOfTokens <= 10, "Max ghosts to mint is 10");
+        require(numberOfTokens <= MAX_GHOSTS_PER_MINT, "Max ghosts to mint is 10");
         uint256 _etherValue = msg.value;
         for (uint256 i = 0; i < numberOfTokens; i++) {
             publicMintIndex = publicMintIndex + 1;
+            require(publicMintIndex <= MAX_PUBLIC_MINT_INDEX, "Incorrect tokenId to mint");
             uint256 price = priceForTokenId(publicMintIndex);
             require(_etherValue >= price, "Ether value not enough");
             _etherValue = _etherValue - price;
-            _publicSafeMint(msg.sender, publicMintIndex);
+            hippyGhosts.mint(msg.sender, publicMintIndex);
         }
         if (_etherValue > 0) {
             payable(msg.sender).transfer(_etherValue);

@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "solmate/tokens/ERC721.sol";
-import "openzeppelin-contracts/interfaces/IERC20.sol";
-import "openzeppelin-contracts/interfaces/IERC2981.sol";
-import "openzeppelin-contracts/access/Ownable.sol";
-
 /**
  *   _    _ _____ _____  _______     __   _____ _    _  ____   _____ _______ _____
  *  | |  | |_   _|  __ \|  __ \ \   / /  / ____| |  | |/ __ \ / ____|__   __/ ____|
@@ -15,6 +10,11 @@ import "openzeppelin-contracts/access/Ownable.sol";
  *  |_|  |_|_____|_|    |_|      |_|     \_____|_|  |_|\____/|_____/   |_| |_____/
  *
  */
+
+import "solmate/tokens/ERC721.sol";
+import "openzeppelin-contracts/interfaces/IERC20.sol";
+import "openzeppelin-contracts/interfaces/IERC2981.sol";
+import "openzeppelin-contracts/access/Ownable.sol";
 
 contract HippyGhosts is ERC721, IERC2981, Ownable {
 
@@ -32,11 +32,6 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      */
     address public renderer;
 
-    /**
-     * @dev See {IERC721Enumerable-totalSupply}
-     * IERC721Enumerable is not implemented in this contract except totalSupply
-     */
-    uint256 public totalSupply;
 
     /****************************************
      * Functions
@@ -61,8 +56,8 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
 
     function mint(address to, uint256 tokenId) external {
         require(msg.sender == mintController, "caller is not the mint controller");
+        require(tokenId >= 1 && tokenId <= 9999, "Incorrect tokenId to mint");
         _safeMint(to, tokenId, "");
-        totalSupply = totalSupply + 1;
     }
 
     /* overrides */
@@ -79,7 +74,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      * @dev See {IERC2981-royaltyInfo}.
      */
     function royaltyInfo(uint256 tokenId, uint256 salePrice)
-        external
+        public
         view
         override
         returns (address receiver, uint256 royaltyAmount)

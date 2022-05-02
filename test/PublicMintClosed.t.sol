@@ -36,7 +36,7 @@ contract PublicMintClosedTest is Test {
         mintController.mint(1);
     }
 
-    function testMintSuccess() public {
+    function testMintSuccess_Report() public {
         mintController.setPublicMintStartBlock(200);
         vm.roll(201);
         vm.prank(EOA1, EOA1);
@@ -45,7 +45,7 @@ contract PublicMintClosedTest is Test {
         assertEq(address(mintController).balance, 0.08 ether * 10);
     }
 
-    function testMintGasReport() public {
+    function testMint1_Report() public {
         mintController.setPublicMintStartBlock(100);
         vm.prank(EOA1, EOA1);
         mintController.mint{value: 0.08 ether}(1);
