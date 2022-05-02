@@ -38,3 +38,17 @@ forge test --match-test testMintGasReport --gas-report
 forge install openzeppelin/openzeppelin-contracts@v4.4.2
 forge install brockelmore/forge-std
 ```
+
+### Deploy with Hardhat
+
+Since remappings doesn't work with hardhat, I need change the dependencies structure to hardhat style and config remappings for Forge
+
+```bash
+yarn hardhat deploy --network rinkeby --tags nft
+```
+
+#### verify contracts
+
+```bash
+yarn hardhat etherscan-verify --network rinkeby
+```

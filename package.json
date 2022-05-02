@@ -8,6 +8,7 @@
   "private": true,
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@openzeppelin/contracts": "^4.6.0",
     "dotenv": "^16.0.0",
     "ethers": "^5.6.4",

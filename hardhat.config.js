@@ -1,11 +1,12 @@
-const { task } = require('hardhat/config');
 require('@nomiclabs/hardhat-ethers');
+require("@nomiclabs/hardhat-etherscan");
 require('hardhat-deploy');
+
 const dotenv = require('dotenv');
 
 // Load environment variables.
 dotenv.config();
-const NULL_PRIVATE_KEY = '0x0000000000000000000000000000000000000000000000000000000000000000';
+const NULL_PRIVATE_KEY = '0x000000000000000000000000000000000000000000000000000000000000DEAD';
 
 module.exports = {
   solidity: {
@@ -75,4 +76,9 @@ module.exports = {
   paths: {
     sources: './src',
   },
+  verify: {
+    etherscan: {
+      apiKey: process.env.ETHERSCAN_API_KEY
+    }
+  }
 };
