@@ -19,12 +19,14 @@ contract PrivateMintTest is Test {
     address constant EOA2 = address(uint160(uint256(keccak256('user account 2'))));
 
     function setUp() public {
-        hippyGhosts = new HippyGhosts();
-        renderer = new HippyGhostsRenderer("");
         address verificationAddress = vm.addr(VERIFICATION_PRIVATE_KEY);
-        mintController = new HippyGhostsMinter(address(hippyGhosts), verificationAddress);
+        hippyGhosts = new HippyGhosts("", verificationAddress);
+        renderer = HippyGhostsRenderer(hippyGhosts.renderer());
+        mintController = HippyGhostsMinter(hippyGhosts.mintController());
+        // renderer = new HippyGhostsRenderer(address(hippyGhosts), "");
+        // mintController = new HippyGhostsMinter(address(hippyGhosts), verificationAddress);
+        // hippyGhosts.setParams(address(renderer), address(mintController));
         // hippyGhosts.setVerificationAddress(verificationAddress);
-        hippyGhosts.setParams(address(renderer), address(mintController));
     }
 
     function _sign(bytes memory data) private returns (bytes memory signature) {

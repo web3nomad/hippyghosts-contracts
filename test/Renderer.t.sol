@@ -15,10 +15,12 @@ contract RendererTest is Test {
     address constant EOA2 = address(uint160(uint256(keccak256('user account 2'))));
 
     function setUp() public {
-        hippyGhosts = new HippyGhosts();
-        renderer = new HippyGhostsRenderer("prefix1/");
-        mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
-        hippyGhosts.setParams(address(renderer), address(mintController));
+        hippyGhosts = new HippyGhosts("prefix1/", address(0));
+        renderer = HippyGhostsRenderer(hippyGhosts.renderer());
+        mintController = HippyGhostsMinter(hippyGhosts.mintController());
+        // renderer = new HippyGhostsRenderer(address(hippyGhosts), "prefix1/");
+        // mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
+        // hippyGhosts.setParams(address(renderer), address(mintController));
         // open public mint
         mintController.setPublicMintStartBlock(100);
         vm.roll(100);
@@ -46,8 +48,8 @@ contract RendererTest is Test {
     function testChangeBaseURI() public {
         uint256 tokenId = _mint();
         // change renderer
-        HippyGhostsRenderer _renderer = new HippyGhostsRenderer("prefix2/");
-        hippyGhosts.setParams(address(_renderer), hippyGhosts.mintController());
+        HippyGhostsRenderer _renderer = new HippyGhostsRenderer(address(hippyGhosts), "prefix2/");
+        hippyGhosts.setRenderer(address(_renderer));
         assertEq(hippyGhosts.tokenURI(tokenId), "prefix2/1501");
         // new token
         tokenId = _mint();
@@ -67,7 +69,7 @@ contract RendererTest is Test {
          * IMPORTANT: selfdestruct will destruct contract after transaction is complete,
          * so there won't be error next line
          */
-        // hippyGhosts.setParams(address(0), hippyGhosts.mintController());
+        // hippyGhosts.setRenderer(address(0));
         // vm.expectRevert();
         // string memory uri = hippyGhosts.tokenURI(tokenId);
         // emit log(uri);

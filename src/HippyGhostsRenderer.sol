@@ -7,9 +7,14 @@ import "openzeppelin-contracts/access/Ownable.sol";
 contract HippyGhostsRenderer is Ownable {
     using Strings for uint256;
 
+    address public immutable hippyGhosts;
     string public baseURI;
 
-    constructor(string memory baseURI_) {
+    constructor(
+        address hippyGhosts_,
+        string memory baseURI_
+    ) {
+        hippyGhosts = hippyGhosts_;
         baseURI = baseURI_;
     }
 

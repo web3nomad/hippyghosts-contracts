@@ -15,6 +15,9 @@ import "solmate/tokens/ERC721.sol";
 import "openzeppelin-contracts/interfaces/IERC20.sol";
 import "openzeppelin-contracts/interfaces/IERC2981.sol";
 import "openzeppelin-contracts/access/Ownable.sol";
+import "./HippyGhostsMinter.sol";
+import "./HippyGhostsRenderer.sol";
+
 
 contract HippyGhosts is ERC721, IERC2981, Ownable {
 
@@ -25,7 +28,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /**
      *  @dev the contract implements the minting logic
      */
-    address public mintController;
+    address payable public mintController;
 
     /**
      *  @dev renderer for {IERC721Metadata-tokenURI}
@@ -37,14 +40,27 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      * Functions
      ****************************************/
 
-    constructor() ERC721("Hippy Ghosts", "GHOST") {}
+    constructor(
+        string memory baseURI_,
+        address verificationAddress_
+    ) ERC721("Hippy Ghosts", "GHOST") {
+        HippyGhostsRenderer _renderer = new HippyGhostsRenderer(address(this), baseURI_);
+        HippyGhostsMinter _mintController = new HippyGhostsMinter(address(this), verificationAddress_);
+        _renderer.transferOwnership(_msgSender());
+        _mintController.transferOwnership(_msgSender());
+        renderer = address(_renderer);
+        mintController = payable(address(_mintController));
+    }
 
     receive() external payable {}
 
     /* config functions */
 
-    function setParams(address renderer_, address mintController_) external onlyOwner {
+    function setRenderer(address renderer_) external onlyOwner {
         renderer = renderer_;
+    }
+
+    function setMintController(address payable mintController_) external onlyOwner {
         mintController = mintController_;
     }
 

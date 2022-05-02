@@ -18,10 +18,12 @@ contract PublicMintOpenTest is Test {
     uint256 constant BASE_BLOCK = 10000000;
 
     function setUp() public {
-        hippyGhosts = new HippyGhosts();
-        renderer = new HippyGhostsRenderer("");
-        mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
-        hippyGhosts.setParams(address(renderer), address(mintController));
+        hippyGhosts = new HippyGhosts("", address(0));
+        renderer = HippyGhostsRenderer(hippyGhosts.renderer());
+        mintController = HippyGhostsMinter(hippyGhosts.mintController());
+        // renderer = new HippyGhostsRenderer(address(hippyGhosts), "");
+        // mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
+        // hippyGhosts.setParams(address(renderer), address(mintController));
         vm.roll(BASE_BLOCK - 10000);
         mintController.setPublicMintStartBlock(BASE_BLOCK + 1);
         vm.deal(EOA1, 10000 ether);

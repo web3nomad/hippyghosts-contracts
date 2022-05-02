@@ -27,7 +27,7 @@ contract HippyGhostsMinter is Ownable {
      * Variables
      ****************************************/
 
-    IHippyGhosts public immutable hippyGhosts;
+    address public immutable hippyGhosts;
 
     /**
      * @dev Ether value for each token in public mint
@@ -91,7 +91,7 @@ contract HippyGhostsMinter is Ownable {
         address hippyGhosts_,
         address verificationAddress_
     ) {
-        hippyGhosts = IHippyGhosts(hippyGhosts_);
+        hippyGhosts = hippyGhosts_;
         verificationAddress = verificationAddress_;
     }
 
@@ -122,7 +122,7 @@ contract HippyGhostsMinter is Ownable {
         require(ownerMintCount <= MAX_OWNER_MINT_COUNT, "Not enough ghosts remaining to mint");
         for (uint256 i = 0; i < tokenIds.length; i++) {
             require(tokenIds[i] <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
-            hippyGhosts.mint(addresses[i], tokenIds[i]);
+            IHippyGhosts(hippyGhosts).mint(addresses[i], tokenIds[i]);
         }
     }
 
@@ -151,7 +151,7 @@ contract HippyGhostsMinter is Ownable {
                 // count to next index before minting
                 privateMintIndex = privateMintIndex + 1;
                 require(privateMintIndex <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
-                (success, result) = address(hippyGhosts).call(
+                (success, result) = hippyGhosts.call(
                     abi.encodeWithSignature("mint(address,uint256)", msg.sender, privateMintIndex)
                 );
                 // Mint will fail ONLY when tokenId is taken
@@ -221,7 +221,7 @@ contract HippyGhostsMinter is Ownable {
             uint256 price = priceForTokenId(_currentEpoch, _tokenEpoch);
             // require(_etherValue >= price, "Ether value not enough");  // not necessary, `uint` will raise error
             _etherValue = _etherValue - price;
-            hippyGhosts.mint(msg.sender, tokenId);
+            IHippyGhosts(hippyGhosts).mint(msg.sender, tokenId);
         }
         publicMintIndex = tokenId;
         if (_etherValue > 0) {
