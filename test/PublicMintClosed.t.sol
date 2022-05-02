@@ -14,12 +14,10 @@ contract PublicMintClosedTest is Test {
     address constant EOA1 = address(uint160(uint256(keccak256('user account 1'))));
 
     function setUp() public {
-        hippyGhosts = new HippyGhosts("", address(0));
-        renderer = HippyGhostsRenderer(hippyGhosts.renderer());
-        mintController = HippyGhostsMinter(hippyGhosts.mintController());
-        // renderer = new HippyGhostsRenderer(address(hippyGhosts), "");
-        // mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
-        // hippyGhosts.setParams(address(renderer), address(mintController));
+        hippyGhosts = new HippyGhosts();
+        renderer = new HippyGhostsRenderer(address(hippyGhosts), "");
+        mintController = new HippyGhostsMinter(address(hippyGhosts), address(0));
+        hippyGhosts.setAddresses(address(renderer), address(mintController));
         vm.roll(100);
         vm.deal(EOA1, 10 ether);
     }

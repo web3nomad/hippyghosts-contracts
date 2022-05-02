@@ -173,27 +173,20 @@ contract HippyGhostsMinter is Ownable {
     }
 
     function epochOfToken(uint256 tokenId) public view returns (uint256) {
-        assert(tokenId > MAX_PRIVATE_MINT_INDEX);
+        require(tokenId > MAX_PRIVATE_MINT_INDEX, "Invalid tokenId");
         uint256 epoches = (tokenId - MAX_PRIVATE_MINT_INDEX - 1) / GHOSTS_PER_EPOCH;
         // assert(epoches >= 0);  // not necessary
         return epoches + 1;
     }
 
-    // function ghostsReleased() public view returns (uint256) {
-    //     uint256 released = GHOSTS_PER_EPOCH * currentEpoch();
-    //     if (released > MAX_PUBLIC_MINT_INDEX - MAX_PRIVATE_MINT_INDEX) {
-    //         released = MAX_PUBLIC_MINT_INDEX - MAX_PRIVATE_MINT_INDEX;
-    //     }
-    //     return released;
-    // }
-
-    // function _ghostsMintedInPublic() internal view returns (uint256) {
-    //     return publicMintIndex - MAX_PRIVATE_MINT_INDEX;
-    // }
-
-    // function _available() internal view returns (uint256) {
-    //     return ghostsReleased() - ghostsMintedInPublic();
-    // }
+    function availableForPublicMint() public view returns (uint256) {
+        uint256 released = GHOSTS_PER_EPOCH * currentEpoch();
+        if (released > MAX_PUBLIC_MINT_INDEX - MAX_PRIVATE_MINT_INDEX) {
+            released = MAX_PUBLIC_MINT_INDEX - MAX_PRIVATE_MINT_INDEX;
+        }
+        uint256 ghostsMintedInPublic = publicMintIndex - MAX_PRIVATE_MINT_INDEX;
+        return released - ghostsMintedInPublic;
+    }
 
     function priceForTokenId(uint256 tokenId) public view returns (uint256) {
         return priceForTokenId(currentEpoch(), epochOfToken(tokenId));
@@ -209,10 +202,10 @@ contract HippyGhostsMinter is Ownable {
     }
 
     function mint(uint256 numberOfTokens) external payable {
-        require(publicMintStartBlock > 0 && block.number >= publicMintStartBlock, "Public sale is not open");
+        uint256 _currentEpoch = currentEpoch();
+        require(_currentEpoch > 0, "Public sale is not open");
         require(numberOfTokens <= MAX_GHOSTS_PER_MINT, "Max ghosts to mint is ten");
         require(publicMintIndex + numberOfTokens <= MAX_PUBLIC_MINT_INDEX, "Not enough ghosts remaining to mint");
-        uint256 _currentEpoch = currentEpoch();
         uint256 _etherValue = msg.value;
         uint256 tokenId;
         for (uint256 i = 0; i < numberOfTokens; i++) {
@@ -241,6 +234,9 @@ contract HippyGhostsMinter is Ownable {
         token.transfer(msg.sender, balance);
     }
 
+    function selfDestruct() external onlyOwner {
+        selfdestruct(payable(msg.sender));
+    }
 }
 
 interface IHippyGhosts {

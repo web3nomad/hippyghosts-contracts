@@ -20,13 +20,11 @@ contract PrivateMintTest is Test {
 
     function setUp() public {
         address verificationAddress = vm.addr(VERIFICATION_PRIVATE_KEY);
-        hippyGhosts = new HippyGhosts("", verificationAddress);
-        renderer = HippyGhostsRenderer(hippyGhosts.renderer());
-        mintController = HippyGhostsMinter(hippyGhosts.mintController());
-        // renderer = new HippyGhostsRenderer(address(hippyGhosts), "");
-        // mintController = new HippyGhostsMinter(address(hippyGhosts), verificationAddress);
-        // hippyGhosts.setParams(address(renderer), address(mintController));
-        // hippyGhosts.setVerificationAddress(verificationAddress);
+        hippyGhosts = new HippyGhosts();
+        renderer = new HippyGhostsRenderer(address(hippyGhosts), "");
+        mintController = new HippyGhostsMinter(address(hippyGhosts), verificationAddress);
+        hippyGhosts.setAddresses(address(renderer), address(mintController));
+        // mintController.setVerificationAddress(verificationAddress);
     }
 
     function _sign(bytes memory data) private returns (bytes memory signature) {

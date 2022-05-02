@@ -13,14 +13,11 @@ module.exports = async ({
   await deploy('HippyGhosts', {
     from: deployer,
     log: true,
-    args: [
-       baseURI,
-       whitelistVerificationAddress,
-    ],
+    args: [],
   });
 
-  /*
   const HippyGhosts = await deployments.get('HippyGhosts');
+
   await deploy('HippyGhostsRenderer', {
     from: deployer,
     log: true,
@@ -29,6 +26,7 @@ module.exports = async ({
       baseURI,
     ],
   });
+
   await deploy('HippyGhostsMinter', {
     from: deployer,
     log: true,
@@ -37,7 +35,6 @@ module.exports = async ({
       whitelistVerificationAddress,
     ],
   });
-  */
 
 }
 

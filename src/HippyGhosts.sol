@@ -15,8 +15,6 @@ import "./ERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./HippyGhostsMinter.sol";
-import "./HippyGhostsRenderer.sol";
 
 
 contract HippyGhosts is ERC721, IERC2981, Ownable {
@@ -26,9 +24,9 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      ****************************************/
 
     /**
-     *  @dev the contract implements the minting logic
+     *  @dev the contract that implements the minting logic
      */
-    address payable public mintController;
+    address public mintController;
 
     /**
      *  @dev renderer for {IERC721Metadata-tokenURI}
@@ -40,28 +38,19 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      * Functions
      ****************************************/
 
-    constructor(
-        string memory baseURI_,
-        address verificationAddress_
-    ) ERC721("Hippy Ghosts", "GHOST") {
-        HippyGhostsRenderer _renderer = new HippyGhostsRenderer(address(this), baseURI_);
-        HippyGhostsMinter _mintController = new HippyGhostsMinter(address(this), verificationAddress_);
-        _renderer.transferOwnership(_msgSender());
-        _mintController.transferOwnership(_msgSender());
-        renderer = address(_renderer);
-        mintController = payable(address(_mintController));
-    }
+    constructor() ERC721("Hippy Ghosts", "GHOST") {}
 
     receive() external payable {}
 
     /* config functions */
 
-    function setRenderer(address renderer_) external onlyOwner {
-        renderer = renderer_;
-    }
-
-    function setMintController(address payable mintController_) external onlyOwner {
-        mintController = mintController_;
+    function setAddresses(address renderer_, address mintController_) external onlyOwner {
+        if (renderer_ != address(0)) {
+            renderer = renderer_;
+        }
+        if (mintController_ != address(0)) {
+            mintController = mintController_;
+        }
     }
 
     /* mint logic */
@@ -85,22 +74,16 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /**
      * @dev See {IERC2981-royaltyInfo}.
      */
-    function royaltyInfo(uint256 tokenId, uint256 salePrice)
-        public
-        view
-        override
-        returns (address receiver, uint256 royaltyAmount)
-    {
+    function royaltyInfo(
+        uint256 tokenId, uint256 salePrice
+    ) public view override returns (address receiver, uint256 royaltyAmount) {
         require(_ownerOf[tokenId] != address(0), "royaltyInfo for nonexistent token");
         return (address(this), salePrice * 5 / 100);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, IERC165)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, IERC165) returns (bool) {
         return interfaceId == type(IERC2981).interfaceId || super.supportsInterface(interfaceId);
     }
 
