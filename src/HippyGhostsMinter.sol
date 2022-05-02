@@ -112,19 +112,6 @@ contract HippyGhostsMinter is Ownable {
         return _claimedMintKeys[mintKey];
     }
 
-    /* internal mint logic */
-
-    // function _exists(uint256 tokenId) internal returns (bool) {
-    //     (bool success, bytes memory result) =
-    //         address(hippyGhosts).call(abi.encodeWithSignature("ownerOf(uint256)", tokenId));
-    //     return success && (abi.decode(result, (address)) != address(0));
-    // }
-
-    function _privateSafeMint(address to, uint256 tokenId) internal {
-        require(tokenId <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
-        hippyGhosts.mint(to, tokenId);
-    }
-
     /* private mint functions */
 
     function ownerMint(
@@ -158,13 +145,17 @@ contract HippyGhostsMinter is Ownable {
         emit MintKeyClaimed(msg.sender, mintKey, numberOfTokens);
 
         for (uint256 i = 0; i < numberOfTokens; i++) {
-            // count to next index before minting
-            privateMintIndex = privateMintIndex + 1;
-            while (hippyGhosts.exists(privateMintIndex)) {
-                // skip tokenId minted in ownerMint
+            bool success = false;
+            bytes memory result;
+            while (!success) {
+                // count to next index before minting
                 privateMintIndex = privateMintIndex + 1;
+                require(privateMintIndex <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
+                (success, result) = address(hippyGhosts).call(
+                    abi.encodeWithSignature("mint(address,uint256)", msg.sender, privateMintIndex)
+                );
+                // Mint will fail ONLY when tokenId is taken
             }
-            _privateSafeMint(msg.sender, privateMintIndex);
         }
     }
 
@@ -184,6 +175,7 @@ contract HippyGhostsMinter is Ownable {
     function epochOfToken(uint256 tokenId) public view returns (uint256) {
         assert(tokenId > MAX_PRIVATE_MINT_INDEX);
         uint256 epoches = (tokenId - MAX_PRIVATE_MINT_INDEX - 1) / GHOSTS_PER_EPOCH;
+        // assert(epoches >= 0);  // not necessary
         return epoches + 1;
     }
 
@@ -204,11 +196,12 @@ contract HippyGhostsMinter is Ownable {
     // }
 
     function priceForTokenId(uint256 tokenId) public view returns (uint256) {
-        uint256 cEpoch = currentEpoch();
-        uint256 tEpoch = epochOfToken(tokenId);
-        assert(tEpoch > 0);
-        require(cEpoch >= tEpoch, "Target epoch is not open");
-        uint256 price = publicMintPriceUpper - (cEpoch - tEpoch) * publicMintPriceDecay;
+        return priceForTokenId(currentEpoch(), epochOfToken(tokenId));
+    }
+
+    function priceForTokenId(uint256 _currentEpoch, uint256 _tokenEpoch) public view returns (uint256) {
+        require(_currentEpoch >= _tokenEpoch, "Target epoch is not open");
+        uint256 price = publicMintPriceUpper - (_currentEpoch - _tokenEpoch) * publicMintPriceDecay;
         if (price < publicMintPriceLower) {
             price = publicMintPriceLower;
         }
@@ -217,16 +210,20 @@ contract HippyGhostsMinter is Ownable {
 
     function mint(uint256 numberOfTokens) external payable {
         require(publicMintStartBlock > 0 && block.number >= publicMintStartBlock, "Public sale is not open");
-        require(numberOfTokens <= MAX_GHOSTS_PER_MINT, "Max ghosts to mint is 10");
+        require(numberOfTokens <= MAX_GHOSTS_PER_MINT, "Max ghosts to mint is ten");
+        require(publicMintIndex + numberOfTokens <= MAX_PUBLIC_MINT_INDEX, "Not enough ghosts remaining to mint");
+        uint256 _currentEpoch = currentEpoch();
         uint256 _etherValue = msg.value;
+        uint256 tokenId;
         for (uint256 i = 0; i < numberOfTokens; i++) {
-            publicMintIndex = publicMintIndex + 1;
-            require(publicMintIndex <= MAX_PUBLIC_MINT_INDEX, "Incorrect tokenId to mint");
-            uint256 price = priceForTokenId(publicMintIndex);
-            require(_etherValue >= price, "Ether value not enough");
+            tokenId = publicMintIndex + i + 1;
+            uint256 _tokenEpoch = epochOfToken(tokenId);
+            uint256 price = priceForTokenId(_currentEpoch, _tokenEpoch);
+            // require(_etherValue >= price, "Ether value not enough");  // not necessary, `uint` will raise error
             _etherValue = _etherValue - price;
-            hippyGhosts.mint(msg.sender, publicMintIndex);
+            hippyGhosts.mint(msg.sender, tokenId);
         }
+        publicMintIndex = tokenId;
         if (_etherValue > 0) {
             payable(msg.sender).transfer(_etherValue);
         }
