@@ -11,8 +11,8 @@ pragma solidity 0.8.11;
  *
  * Total 9999 Hippy Ghosts
  * ----------------------------------------------------------------------------
- * 1 |  200 | [1,200]     | 1/1 ghosts, kept for team
- * 2 | 1300 | [201,1500]  | private mint, 300 for team, 1000 for community
+ * 1 |  180 | [   1, 180] | kept for team
+ * 2 | 1320 | [ 181,1500] | private mint, 320 for team, 1000 for community
  * 3 | 8499 | [1501,9999] | public mint, release 300 ghosts every 40000 blocks
  * ----------------------------------------------------------------------------
  */
@@ -50,9 +50,9 @@ contract HippyGhostsMinter is Ownable {
     uint256 public constant MAX_GHOSTS_PER_MINT = 10;
     // team
     uint256 public ownerMintCount = 0;
-    uint256 public constant MAX_OWNER_MINT_COUNT = 200;
+    uint256 public constant MAX_OWNER_MINT_COUNT = 300;
     // private
-    uint256 public privateMintIndex = 200;
+    uint256 public privateMintIndex = 180;
     uint256 public constant MAX_PRIVATE_MINT_INDEX = 1500;
     // public
     uint256 public publicMintIndex = 1500;

@@ -67,13 +67,13 @@ contract PrivateMintTest is Test {
             addresses[0] = EOA1;
             addresses[1] = EOA1;
             addresses[2] = EOA1;
-            tokenIds[0] = 202;
-            tokenIds[1] = 204;
-            tokenIds[2] = 205;
+            tokenIds[0] = 182;
+            tokenIds[1] = 184;
+            tokenIds[2] = 185;
             mintController.ownerMint(addresses, tokenIds);
-            assertEq(hippyGhosts.ownerOf(202), EOA1);
-            assertEq(hippyGhosts.ownerOf(204), EOA1);
-            assertEq(hippyGhosts.ownerOf(205), EOA1);
+            assertEq(hippyGhosts.ownerOf(182), EOA1);
+            assertEq(hippyGhosts.ownerOf(184), EOA1);
+            assertEq(hippyGhosts.ownerOf(185), EOA1);
         }
         // sequence mint 5
         {
@@ -86,11 +86,11 @@ contract PrivateMintTest is Test {
             hoax(EOA2, 10 ether);
             mintController.mintWithSignature{ value: valueInWei }(
                 numberOfTokens, valueInWei, mintKey, signature);
-            assertEq(hippyGhosts.ownerOf(201), EOA2);
-            assertEq(hippyGhosts.ownerOf(203), EOA2);
-            assertEq(hippyGhosts.ownerOf(206), EOA2);
-            assertEq(hippyGhosts.ownerOf(207), EOA2);
-            assertEq(hippyGhosts.ownerOf(208), EOA2);
+            assertEq(hippyGhosts.ownerOf(181), EOA2);
+            assertEq(hippyGhosts.ownerOf(183), EOA2);
+            assertEq(hippyGhosts.ownerOf(186), EOA2);
+            assertEq(hippyGhosts.ownerOf(187), EOA2);
+            assertEq(hippyGhosts.ownerOf(188), EOA2);
         }
     }
 
