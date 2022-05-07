@@ -127,4 +127,28 @@ contract PublicMintOpenTest is Test {
         assertEq(address(mintController).balance, 0.08 ether * 299 + 0.04 ether + 0.05 ether);
     }
 
+    function testMintLastWeek() public {
+        vm.startPrank(EOA1, EOA1);
+        /**
+         * 29 weeks later, all ghosts minted
+         */
+        for (uint256 i=1; i<=28; i++) {
+            vm.roll(BASE_BLOCK + 1 + 40000 * i);
+            for (uint256 j=0; j<30; j++) {
+                mintController.mint{value: 0.08 ether * 10}(10);
+            }
+        }
+        assertEq(hippyGhosts.balanceOf(EOA1), 8400);
+        for (uint256 j=0; j<9; j++) {
+            mintController.mint{value: 0.08 ether * 10}(10);
+        }
+        assertEq(hippyGhosts.balanceOf(EOA1), 8490);
+        vm.expectRevert("Not enough ghosts remaining to mint");
+        mintController.mint{value: 0.08 ether * 10}(10);
+        mintController.mint{value: 0.08 ether * 10}(9);
+        assertEq(hippyGhosts.balanceOf(EOA1), 8499);
+        vm.expectRevert("Not enough ghosts remaining to mint");
+        mintController.mint{value: 0.08 ether}(1);
+    }
+
 }
