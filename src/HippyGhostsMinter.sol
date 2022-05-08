@@ -32,9 +32,9 @@ contract HippyGhostsMinter is Ownable {
     /**
      * @dev Ether value for each token in public mint
      */
-    uint256 public publicMintPriceUpper = 0.08 ether;
-    uint256 public publicMintPriceLower = 0.04 ether;
-    uint256 public publicMintPriceDecay = 0.01 ether;
+    uint256 public publicMintPriceUpper = 0.24 ether;
+    uint256 public publicMintPriceLower = 0.08 ether;
+    uint256 public publicMintPriceDecay = 0.04 ether;
 
     /**
      * @dev Starting block and inverval for public mint

@@ -40,17 +40,17 @@ contract PublicMintClosedTest is Test {
         mintController.setPublicMintStartBlock(200);
         vm.roll(201);
         vm.prank(EOA1, EOA1);
-        mintController.mint{value: 0.08 ether * 10}(10);
+        mintController.mint{value: 0.24 ether * 10}(10);
         assertEq(hippyGhosts.balanceOf(EOA1), 10);
-        assertEq(address(mintController).balance, 0.08 ether * 10);
+        assertEq(address(mintController).balance, 0.24 ether * 10);
     }
 
     function testMint1_Report() public {
         mintController.setPublicMintStartBlock(100);
         vm.prank(EOA1, EOA1);
-        mintController.mint{value: 0.08 ether}(1);
+        mintController.mint{value: 0.24 ether}(1);
         assertEq(hippyGhosts.balanceOf(EOA1), 1);
-        assertEq(address(mintController).balance, 0.08 ether);
+        assertEq(address(mintController).balance, 0.24 ether);
     }
 
 }

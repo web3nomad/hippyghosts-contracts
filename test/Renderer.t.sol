@@ -30,7 +30,7 @@ contract RendererTest is Test {
     function _mint() private returns (uint256) {
         _tokenId += 1;
         vm.prank(EOA1, EOA1);
-        mintController.mint{value: 0.08 ether}(1);
+        mintController.mint{value: 0.24 ether}(1);
         assertEq(hippyGhosts.ownerOf(_tokenId), EOA1);
         return _tokenId;
     }
