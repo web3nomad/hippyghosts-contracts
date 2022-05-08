@@ -37,6 +37,9 @@ module.exports = async ({
     await tx.wait();
   }
 
+  // const hippyGhostsMinter = new ethers.Contract(HippyGhostsMinter.address, HippyGhostsMinter.abi, signer);
+  // await hippyGhostsMinter.setPublicMintStartBlock(14684334).then(tx => tx.wait());
+
 }
 
 module.exports.tags = ['connect'];
