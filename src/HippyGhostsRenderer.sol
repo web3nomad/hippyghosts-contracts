@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract HippyGhostsRenderer is Ownable {
     using Strings for uint256;
 
+    bytes32 constant public MERKLE_ROOT = 0x58d247a687ef48f010e2e6107a04d575787163cfb0d70543c421a5001e9f5aab;
     address public immutable hippyGhosts;
     string public baseURI;
 
