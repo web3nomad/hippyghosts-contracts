@@ -52,8 +52,8 @@ contract HippyGhostsMinter is Ownable {
     uint256 public ownerMintCount = 0;
     uint256 public constant MAX_OWNER_MINT_COUNT = 300;
     // private
-    struct PrivateMint { uint128 count; uint128 index; }
-    PrivateMint public privateMint = PrivateMint(0, 180);
+    uint128 public privateMintCount = 0;
+    uint128 public privateMintIndex = 180;
     uint256 public constant MAX_PRIVATE_MINT_INDEX = 1500;
     // public
     uint256 public publicMintIndex = 1500;
@@ -145,24 +145,22 @@ contract HippyGhostsMinter is Ownable {
         _claimedMintKeys[mintKey] = true;
         emit MintKeyClaimed(msg.sender, mintKey, numberOfTokens);
 
-        PrivateMint memory currentMint = PrivateMint(
-            privateMint.count + uint128(numberOfTokens),
-            privateMint.index
-        );
+        uint128 currentMintIndex = privateMintIndex;
         for (uint256 i = 0; i < numberOfTokens; i++) {
             bool success = false;
             bytes memory result;
             while (!success) {
                 // count to next index before minting
-                currentMint.index = currentMint.index + 1;
-                require(currentMint.index <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
+                currentMintIndex = currentMintIndex + 1;
+                require(currentMintIndex <= MAX_PRIVATE_MINT_INDEX, "Incorrect tokenId to mint");
                 (success, result) = hippyGhosts.call(
-                    abi.encodeWithSignature("mint(address,uint256)", msg.sender, currentMint.index)
+                    abi.encodeWithSignature("mint(address,uint256)", msg.sender, currentMintIndex)
                 );
                 // Mint will fail ONLY when tokenId is taken
             }
         }
-        privateMint = currentMint;
+        privateMintCount = privateMintCount + uint128(numberOfTokens);
+        privateMintIndex = currentMintIndex;
     }
 
     /* public mint functions */
