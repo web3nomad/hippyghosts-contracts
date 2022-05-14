@@ -57,23 +57,4 @@ contract RendererTest is Test {
         assertEq(hippyGhosts.tokenURI(tokenId), "prefix3/1502");
     }
 
-    function testRendererDestruct() public {
-        vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(EOA1, EOA1);
-        renderer.selfDestruct();
-        // mint
-        uint256 tokenId = _mint();
-        assertEq(hippyGhosts.tokenURI(tokenId), "prefix1/1501");
-        // again with owner
-        renderer.selfDestruct();
-        /**
-         * IMPORTANT: selfdestruct will destruct contract after transaction is complete,
-         * so there won't be error next line
-         */
-        // hippyGhosts.setRenderer(address(0));
-        // vm.expectRevert();
-        // string memory uri = hippyGhosts.tokenURI(tokenId);
-        // emit log(uri);
-    }
-
 }

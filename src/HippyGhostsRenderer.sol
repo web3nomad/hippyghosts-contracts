@@ -27,8 +27,4 @@ contract HippyGhostsRenderer is Ownable {
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
     }
 
-    function selfDestruct() external onlyOwner {
-        selfdestruct(payable(msg.sender));
-    }
-
 }

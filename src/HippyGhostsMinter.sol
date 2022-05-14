@@ -133,7 +133,7 @@ contract HippyGhostsMinter is Ownable {
         address mintKey,
         bytes memory signature
     ) external payable {
-        require(valueInWei == msg.value, "Incorrect ether value sent");
+        require(valueInWei == msg.value, "Incorrect ether value");
         require(_claimedMintKeys[mintKey] == false, "Mint key already claimed");
 
         SignatureVerification.requireValidSignature(
@@ -156,7 +156,7 @@ contract HippyGhostsMinter is Ownable {
                 (success, result) = hippyGhosts.call(
                     abi.encodeWithSignature("mint(address,uint256)", msg.sender, currentMintIndex)
                 );
-                // Mint will fail ONLY when tokenId is taken
+                // mint will fail ONLY when tokenId is taken
             }
         }
         privateMintCount = privateMintCount + uint128(numberOfTokens);
@@ -179,7 +179,6 @@ contract HippyGhostsMinter is Ownable {
     function epochOfToken(uint256 tokenId) public pure returns (uint256) {
         require(tokenId > MAX_PRIVATE_MINT_INDEX, "Invalid tokenId");
         uint256 epoches = (tokenId - MAX_PRIVATE_MINT_INDEX - 1) / GHOSTS_PER_EPOCH;
-        // assert(epoches >= 0);  // not necessary
         return epoches + 1;
     }
 
@@ -215,7 +214,6 @@ contract HippyGhostsMinter is Ownable {
             publicMintIndex = publicMintIndex + 1;
             uint256 _tokenEpoch = epochOfToken(publicMintIndex);
             uint256 price = priceForTokenId(_currentEpoch, _tokenEpoch);
-            // require(_etherValue >= price, "Ether value not enough");  // not necessary, `uint` will raise error
             _etherValue = _etherValue - price;
             IHippyGhosts(hippyGhosts).mint(msg.sender, publicMintIndex);
         }

@@ -24,7 +24,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
      ****************************************/
 
     /**
-     *  @dev the contract that implements the minting logic
+     *  @dev mint logic
      */
     address public mintController;
 
@@ -56,7 +56,7 @@ contract HippyGhosts is ERC721, IERC2981, Ownable {
     /* mint logic */
 
     function mint(address to, uint256 tokenId) external {
-        require(msg.sender == mintController, "caller is not the mint controller");
+        require(msg.sender == mintController, "caller is not mint controller");
         require(tokenId >= 1 && tokenId <= 9999, "Incorrect tokenId to mint");
         _safeMint(to, tokenId, "");
     }
