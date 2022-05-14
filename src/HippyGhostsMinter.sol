@@ -145,7 +145,7 @@ contract HippyGhostsMinter is Ownable {
         _claimedMintKeys[mintKey] = true;
         emit MintKeyClaimed(msg.sender, mintKey, numberOfTokens);
 
-        uint128 currentMintIndex = privateMintIndex;
+        uint256 currentMintIndex = uint256(privateMintIndex);
         for (uint256 i = 0; i < numberOfTokens; i++) {
             bool success = false;
             bytes memory result;
@@ -160,7 +160,7 @@ contract HippyGhostsMinter is Ownable {
             }
         }
         privateMintCount = privateMintCount + uint128(numberOfTokens);
-        privateMintIndex = currentMintIndex;
+        privateMintIndex = uint128(currentMintIndex);
     }
 
     /* public mint functions */

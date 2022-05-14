@@ -48,14 +48,15 @@ module.exports = {
       timeout: 20 * 60 * 1000,
     },
     mainnet: {
-      url: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+      // url: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       gasPrice: 30000000000,  // gwei
       accounts: [
         process.env.MAINNET_DEPLOYER_PRIVATEKEY || NULL_PRIVATE_KEY,
       ],
     },
     rinkeby: {
-       url: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+      url: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
       // url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       // gasPrice: 30000000000,  // gwei
       accounts: [
