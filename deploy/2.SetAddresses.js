@@ -31,7 +31,10 @@ module.exports = async ({
     mintController === '0x0000000000000000000000000000000000000000' &&
     renderer === '0x0000000000000000000000000000000000000000'
   ) {
-    const tx = await hippyGhosts.setAddresses(HippyGhostsRenderer.address, HippyGhostsMinter.address);
+    const tx = await hippyGhosts.setAddresses(
+      HippyGhostsRenderer.address, HippyGhostsMinter.address, {
+        gasPrice: 30000000000
+      });
     console.log(`setAddresses ${HippyGhostsRenderer.address} ${HippyGhostsMinter.address}`);
     console.log(`tx: ${tx.hash}`);
     await tx.wait();
