@@ -50,7 +50,7 @@ module.exports = {
     mainnet: {
       // url: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
       url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      gasPrice: 30000000000,  // gwei
+      gasPrice: 20000000000,  // gwei
       accounts: [
         process.env.MAINNET_DEPLOYER_PRIVATEKEY || NULL_PRIVATE_KEY,
       ],
@@ -72,6 +72,11 @@ module.exports = {
       default: '0x944FC9Ba95a85b47cA79a147c988dF25494566ec',  // 0x000000000000000000000000000000000000000000000000000000000000FFFF
       1: '0x976f61940624C8EeA0F7D2E8852F3F7E32d25E26',  // NFT_WHITELIST_VERIFICATION_PRIVATE_KEY
       4: '0x976f61940624C8EeA0F7D2E8852F3F7E32d25E26',  // NFT_WHITELIST_VERIFICATION_PRIVATE_KEY
+    },
+    gnosisSafe: {
+      default: 0,
+      1: '0xCA4F157682559551AC39b66be5766355DFE66EF9',
+      4: 0,
     },
   },
   paths: {
