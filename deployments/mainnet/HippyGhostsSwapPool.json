@@ -1,0 +1,126 @@
+{
+  "address": "0x454e030F23A5587B4a96fBaE663e59389Eb5f460",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "hippyGhosts_",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "gnosisSafe_",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "hippyGhosts",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "onERC721Received",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "",
+          "type": "bytes4"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x4c19cabd32faa8d538eb3aa1261a4d5ae6757611266bca31ff07f5ac1d64e2a4",
+  "receipt": {
+    "to": null,
+    "from": "0x03793EB77F02B730B1842AFC4f4F66B8305F16a3",
+    "contractAddress": "0x454e030F23A5587B4a96fBaE663e59389Eb5f460",
+    "transactionIndex": 322,
+    "gasUsed": "381876",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000200000000000000000000000000000000002000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000040200880000000000000000000000000200000000000000000000000000000",
+    "blockHash": "0x67f7a8e651ffeaef3144457a25ff86469e734407d929061abcc39da54b238c88",
+    "transactionHash": "0x4c19cabd32faa8d538eb3aa1261a4d5ae6757611266bca31ff07f5ac1d64e2a4",
+    "logs": [
+      {
+        "transactionIndex": 322,
+        "blockNumber": 14890737,
+        "transactionHash": "0x4c19cabd32faa8d538eb3aa1261a4d5ae6757611266bca31ff07f5ac1d64e2a4",
+        "address": "0x2a5503280d66A47DE0754ddc73252CA9a4e93dcb",
+        "topics": [
+          "0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31",
+          "0x000000000000000000000000454e030f23a5587b4a96fbae663e59389eb5f460",
+          "0x000000000000000000000000ca4f157682559551ac39b66be5766355dfe66ef9"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+        "logIndex": 212,
+        "blockHash": "0x67f7a8e651ffeaef3144457a25ff86469e734407d929061abcc39da54b238c88"
+      }
+    ],
+    "blockNumber": 14890737,
+    "cumulativeGasUsed": "15715258",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x2a5503280d66A47DE0754ddc73252CA9a4e93dcb",
+    "0xCA4F157682559551AC39b66be5766355DFE66EF9"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "cfab10ae7ff74085d29270e631812ad6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.11+commit.d7f03943\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"hippyGhosts_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"gnosisSafe_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"hippyGhosts\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"onERC721Received(address,address,uint256,bytes)\":{\"notice\":\"caller must be HippyGhosts contract, this ensures:   - The Transfer really happened before onERC721Received   - SwapPool only accepts NFTs of HippyGhosts\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/HippyGhostsSwapPool.sol\":\"HippyGhostsSwapPool\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/interfaces/IERC721.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (interfaces/IERC721.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../token/ERC721/IERC721.sol\\\";\\n\",\"keccak256\":\"0xaf297d12d8d4a57fe01a70f0ef38908f208e3faedc577056d0b728fa2f3ccf0c\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC721/IERC721.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../../utils/introspection/IERC165.sol\\\";\\n\\n/**\\n * @dev Required interface of an ERC721 compliant contract.\\n */\\ninterface IERC721 is IERC165 {\\n    /**\\n     * @dev Emitted when `tokenId` token is transferred from `from` to `to`.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);\\n\\n    /**\\n     * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.\\n     */\\n    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);\\n\\n    /**\\n     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.\\n     */\\n    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);\\n\\n    /**\\n     * @dev Returns the number of tokens in ``owner``'s account.\\n     */\\n    function balanceOf(address owner) external view returns (uint256 balance);\\n\\n    /**\\n     * @dev Returns the owner of the `tokenId` token.\\n     *\\n     * Requirements:\\n     *\\n     * - `tokenId` must exist.\\n     */\\n    function ownerOf(uint256 tokenId) external view returns (address owner);\\n\\n    /**\\n     * @dev Safely transfers `tokenId` token from `from` to `to`.\\n     *\\n     * Requirements:\\n     *\\n     * - `from` cannot be the zero address.\\n     * - `to` cannot be the zero address.\\n     * - `tokenId` token must exist and be owned by `from`.\\n     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\\n     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function safeTransferFrom(\\n        address from,\\n        address to,\\n        uint256 tokenId,\\n        bytes calldata data\\n    ) external;\\n\\n    /**\\n     * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients\\n     * are aware of the ERC721 protocol to prevent tokens from being forever locked.\\n     *\\n     * Requirements:\\n     *\\n     * - `from` cannot be the zero address.\\n     * - `to` cannot be the zero address.\\n     * - `tokenId` token must exist and be owned by `from`.\\n     * - If the caller is not `from`, it must be have been allowed to move this token by either {approve} or {setApprovalForAll}.\\n     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function safeTransferFrom(\\n        address from,\\n        address to,\\n        uint256 tokenId\\n    ) external;\\n\\n    /**\\n     * @dev Transfers `tokenId` token from `from` to `to`.\\n     *\\n     * WARNING: Usage of this method is discouraged, use {safeTransferFrom} whenever possible.\\n     *\\n     * Requirements:\\n     *\\n     * - `from` cannot be the zero address.\\n     * - `to` cannot be the zero address.\\n     * - `tokenId` token must be owned by `from`.\\n     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(\\n        address from,\\n        address to,\\n        uint256 tokenId\\n    ) external;\\n\\n    /**\\n     * @dev Gives permission to `to` to transfer `tokenId` token to another account.\\n     * The approval is cleared when the token is transferred.\\n     *\\n     * Only a single account can be approved at a time, so approving the zero address clears previous approvals.\\n     *\\n     * Requirements:\\n     *\\n     * - The caller must own the token or be an approved operator.\\n     * - `tokenId` must exist.\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address to, uint256 tokenId) external;\\n\\n    /**\\n     * @dev Approve or remove `operator` as an operator for the caller.\\n     * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.\\n     *\\n     * Requirements:\\n     *\\n     * - The `operator` cannot be the caller.\\n     *\\n     * Emits an {ApprovalForAll} event.\\n     */\\n    function setApprovalForAll(address operator, bool _approved) external;\\n\\n    /**\\n     * @dev Returns the account approved for `tokenId` token.\\n     *\\n     * Requirements:\\n     *\\n     * - `tokenId` must exist.\\n     */\\n    function getApproved(uint256 tokenId) external view returns (address operator);\\n\\n    /**\\n     * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.\\n     *\\n     * See {setApprovalForAll}\\n     */\\n    function isApprovedForAll(address owner, address operator) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x0d4de01fe5360c38b4ad2b0822a12722958428f5138a7ff47c1720eb6fa52bba\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Interface of the ERC165 standard, as defined in the\\n * https://eips.ethereum.org/EIPS/eip-165[EIP].\\n *\\n * Implementers can declare support of contract interfaces, which can then be\\n * queried by others ({ERC165Checker}).\\n *\\n * For an implementation, see {ERC165}.\\n */\\ninterface IERC165 {\\n    /**\\n     * @dev Returns true if this contract implements the interface defined by\\n     * `interfaceId`. See the corresponding\\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\\n     * to learn more about how these ids are created.\\n     *\\n     * This function call must use less than 30 000 gas.\\n     */\\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1\",\"license\":\"MIT\"},\"src/HippyGhostsSwapPool.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.11;\\n\\nimport \\\"@openzeppelin/contracts/interfaces/IERC721.sol\\\";\\n\\ncontract HippyGhostsSwapPool {\\n    address public immutable hippyGhosts;\\n\\n    constructor(\\n        address hippyGhosts_,\\n        address gnosisSafe_\\n    ) {\\n        hippyGhosts = hippyGhosts_;\\n        IERC721(hippyGhosts_).setApprovalForAll(gnosisSafe_, true);\\n    }\\n\\n    /**\\n     * caller must be HippyGhosts contract, this ensures:\\n     *   - The Transfer really happened before onERC721Received\\n     *   - SwapPool only accepts NFTs of HippyGhosts\\n     */\\n    function onERC721Received(\\n        address operator,\\n        address from,\\n        uint256 tokenId,\\n        bytes calldata data\\n    ) external returns (bytes4) {\\n        operator = address(0);  // yeah !\\n        require(msg.sender == hippyGhosts, \\\"Caller is not HippyGhosts.\\\");\\n        require(IERC721(hippyGhosts).ownerOf(tokenId) == address(this), \\\"Ghost is not received.\\\");\\n        if (data.length > 0) {\\n            (bytes4 op, uint256 wantTokenId) = abi.decode(data, (bytes4, uint256));\\n            require(op == bytes4(keccak256(\\\"swap(uint256)\\\")), \\\"Wrong op.\\\");\\n            require(IERC721(hippyGhosts).ownerOf(wantTokenId) == address(this),\\n                \\\"The wanted Ghost doesn't belongs to SwapPool.\\\");\\n            IERC721(hippyGhosts).transferFrom(address(this), from, wantTokenId);\\n        }\\n        // return HippyGhostSwapPool.onERC721Received.selector;\\n        return bytes4(keccak256(\\\"onERC721Received(address,address,uint256,bytes)\\\"));\\n    }\\n}\\n\",\"keccak256\":\"0x637dcb45525a31eef8e359d7f78ac940204ee14a1f71b91dfc1f0c086bbf4ab0\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60a060405234801561001057600080fd5b5060405161068638038061068683398101604081905261002f916100ba565b6001600160a01b03828116608081905260405163a22cb46560e01b81529183166004830152600160248301529063a22cb46590604401600060405180830381600087803b15801561007f57600080fd5b505af1158015610093573d6000803e3d6000fd5b5050505050506100ed565b80516001600160a01b03811681146100b557600080fd5b919050565b600080604083850312156100cd57600080fd5b6100d68361009e565b91506100e46020840161009e565b90509250929050565b6080516105646101226000396000818160710152818160bb0152818161014d0152818161028d015261039001526105646000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063150b7a021461003b578063b75ffd561461006c575b600080fd5b61004e610049366004610432565b6100ab565b6040516001600160e01b031990911681526020015b60405180910390f35b6100937f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b039091168152602001610063565b6000945084336001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000161461012d5760405162461bcd60e51b815260206004820152601a60248201527f43616c6c6572206973206e6f7420486970707947686f7374732e00000000000060448201526064015b60405180910390fd5b6040516331a9108f60e11b81526004810185905230906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690636352211e90602401602060405180830381865afa158015610194573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101b891906104d1565b6001600160a01b0316146102075760405162461bcd60e51b815260206004820152601660248201527523b437b9ba1034b9903737ba103932b1b2b4bb32b21760511b6044820152606401610124565b81156103ef5760008061021c848601866104f5565b90925090506001600160e01b03198216634a5c8c6f60e11b1461026d5760405162461bcd60e51b81526020600482015260096024820152682bb937b7339037b81760b91b6044820152606401610124565b6040516331a9108f60e11b81526004810182905230906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690636352211e90602401602060405180830381865afa1580156102d4573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102f891906104d1565b6001600160a01b0316146103645760405162461bcd60e51b815260206004820152602d60248201527f5468652077616e7465642047686f737420646f65736e27742062656c6f6e677360448201526c103a379029bbb0b82837b7b61760991b6064820152608401610124565b6040516323b872dd60e01b81523060048201526001600160a01b038881166024830152604482018390527f000000000000000000000000000000000000000000000000000000000000000016906323b872dd90606401600060405180830381600087803b1580156103d457600080fd5b505af11580156103e8573d6000803e3d6000fd5b5050505050505b507f150b7a023d4804d13e8c85fb27262cb750cf6ba9f9dd3bb30d90f482ceeb4b1f95945050505050565b6001600160a01b038116811461042f57600080fd5b50565b60008060008060006080868803121561044a57600080fd5b85356104558161041a565b945060208601356104658161041a565b935060408601359250606086013567ffffffffffffffff8082111561048957600080fd5b818801915088601f83011261049d57600080fd5b8135818111156104ac57600080fd5b8960208285010111156104be57600080fd5b9699959850939650602001949392505050565b6000602082840312156104e357600080fd5b81516104ee8161041a565b9392505050565b6000806040838503121561050857600080fd5b82356001600160e01b03198116811461052057600080fd5b94602093909301359350505056fea2646970667358221220f4affe0c2567d3e5080fd386d7e4da0bbef94c7af01a24ba4a35995ffae8fc1564736f6c634300080b0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100365760003560e01c8063150b7a021461003b578063b75ffd561461006c575b600080fd5b61004e610049366004610432565b6100ab565b6040516001600160e01b031990911681526020015b60405180910390f35b6100937f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b039091168152602001610063565b6000945084336001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000161461012d5760405162461bcd60e51b815260206004820152601a60248201527f43616c6c6572206973206e6f7420486970707947686f7374732e00000000000060448201526064015b60405180910390fd5b6040516331a9108f60e11b81526004810185905230906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690636352211e90602401602060405180830381865afa158015610194573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101b891906104d1565b6001600160a01b0316146102075760405162461bcd60e51b815260206004820152601660248201527523b437b9ba1034b9903737ba103932b1b2b4bb32b21760511b6044820152606401610124565b81156103ef5760008061021c848601866104f5565b90925090506001600160e01b03198216634a5c8c6f60e11b1461026d5760405162461bcd60e51b81526020600482015260096024820152682bb937b7339037b81760b91b6044820152606401610124565b6040516331a9108f60e11b81526004810182905230906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690636352211e90602401602060405180830381865afa1580156102d4573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102f891906104d1565b6001600160a01b0316146103645760405162461bcd60e51b815260206004820152602d60248201527f5468652077616e7465642047686f737420646f65736e27742062656c6f6e677360448201526c103a379029bbb0b82837b7b61760991b6064820152608401610124565b6040516323b872dd60e01b81523060048201526001600160a01b038881166024830152604482018390527f000000000000000000000000000000000000000000000000000000000000000016906323b872dd90606401600060405180830381600087803b1580156103d457600080fd5b505af11580156103e8573d6000803e3d6000fd5b5050505050505b507f150b7a023d4804d13e8c85fb27262cb750cf6ba9f9dd3bb30d90f482ceeb4b1f95945050505050565b6001600160a01b038116811461042f57600080fd5b50565b60008060008060006080868803121561044a57600080fd5b85356104558161041a565b945060208601356104658161041a565b935060408601359250606086013567ffffffffffffffff8082111561048957600080fd5b818801915088601f83011261049d57600080fd5b8135818111156104ac57600080fd5b8960208285010111156104be57600080fd5b9699959850939650602001949392505050565b6000602082840312156104e357600080fd5b81516104ee8161041a565b9392505050565b6000806040838503121561050857600080fd5b82356001600160e01b03198116811461052057600080fd5b94602093909301359350505056fea2646970667358221220f4affe0c2567d3e5080fd386d7e4da0bbef94c7af01a24ba4a35995ffae8fc1564736f6c634300080b0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "onERC721Received(address,address,uint256,bytes)": {
+        "notice": "caller must be HippyGhosts contract, this ensures:   - The Transfer really happened before onERC721Received   - SwapPool only accepts NFTs of HippyGhosts"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
