@@ -63,6 +63,7 @@ contract HippyGhostsFreeMinter is Ownable {
      ****************************************/
 
     constructor(address hippyGhosts_, uint256 startTokenId_) {
+        require(startTokenId_ >= 1 && startTokenId_ <= MAX_TOKEN_ID, "Invalid start token id");
         hippyGhosts = hippyGhosts_;
         nextTokenId = startTokenId_;
     }

@@ -22,6 +22,42 @@ contract FreeMintTest is Test {
         hippyGhosts.setAddresses(address(0), address(minter));
     }
 
+    function testConstructorRejectsZeroStartTokenId() public {
+        vm.expectRevert("Invalid start token id");
+        new HippyGhostsFreeMinter(address(hippyGhosts), 0);
+    }
+
+    function testConstructorRejectsStartTokenIdPastMax() public {
+        uint256 tooHigh = minter.MAX_TOKEN_ID() + 1;
+        vm.expectRevert("Invalid start token id");
+        new HippyGhostsFreeMinter(address(hippyGhosts), tooHigh);
+    }
+
+    function testConstructorAcceptsMaxTokenIdAsStart() public {
+        HippyGhostsFreeMinter edgeMinter = new HippyGhostsFreeMinter(
+            address(hippyGhosts), minter.MAX_TOKEN_ID()
+        );
+        assertEq(edgeMinter.nextTokenId(), minter.MAX_TOKEN_ID());
+    }
+
+    /**
+     * Mirrors the real mainnet deploy flow: the deployer is not the admin.
+     * transferOwnership hands control to a separate address (the Gnosis Safe
+     * on mainnet) rather than leaving it on the deploying key.
+     */
+    function testOwnershipCanBeTransferredToAnAdminAddress() public {
+        address safeStandIn = address(uint160(uint256(keccak256('gnosis safe'))));
+        minter.transferOwnership(safeStandIn);
+        assertEq(minter.owner(), safeStandIn);
+
+        vm.expectRevert("Ownable: caller is not the owner");
+        minter.setMintOpen(true);
+
+        vm.prank(safeStandIn);
+        minter.setMintOpen(true);
+        assertTrue(minter.mintOpen());
+    }
+
     function testMintRevertsWhileClosed() public {
         vm.prank(EOA1);
         vm.expectRevert("Mint is not open");
