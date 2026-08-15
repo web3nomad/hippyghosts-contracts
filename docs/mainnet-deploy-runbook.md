@@ -131,16 +131,17 @@ password.
 
 ## Runbook: switching mainnet to `HippyGhostsDynamicMinter`
 
-Preconditions:
+Preconditions (all satisfied as of 2026-08-15):
 - `HippyGhostsDynamicMinter.sol` written, tested (41/41 passing: `forge test`,
   22 of them covering this contract), and exercised end-to-end on a local
-  anvil node with real deployed instances (deploy, ownership handoff,
-  mint-closed revert, free mint at the floor, paid mint with refund, price
-  decay, withdraw).
-- **Still pending: a Sepolia rehearsal with real transactions** — the earlier
-  Sepolia run verified the superseded `HippyGhostsFreeMinter`, not this
-  contract. Do not deploy to mainnet before repeating the Sepolia rehearsal
-  with `HippyGhostsDynamicMinter`.
+  anvil node with real deployed instances.
+- **Sepolia rehearsal done with real transactions** (2026-08-15, minter
+  `0x9f06aF3aEd7f3c437780037F49d1d17A984B61CB`): two-step deploy + separate
+  `setAddresses`, picking up at the previous minter's `nextTokenId` (1600)
+  with no gap, mint-closed revert, free mint at floor 0, paid mint with the
+  excess refunded (and the quote-to-inclusion price drift landing in the
+  user's favor), per-wallet limit revert, withdraw to owner, and on-chain
+  decay observed at exactly `decayPerBlock` per block.
 - `0x03793EB77F02B730B1842AFC4f4F66B8305F16a3` funded with mainnet ETH for gas
   (done 2026-08-15).
 - Its private key imported into a local encrypted keystore named
@@ -245,5 +246,6 @@ in case any of it needs re-running:
 | HippyGhostsFreeMinter (test, superseded) | `0x8963Ac6167abD0f10b56cBEb58ff8Df1008f4f72` | first deploy; owner was the test deployer itself. Contract since deleted from the tree |
 | HippyGhostsFreeMinter (test, handoff rehearsal) | `0xc424f0d63362ed0a239abda8aa11b53e1052c0e0` | owner transferred to a Safe stand-in (`0x…dEaD`), then connected via a separate `setAddresses` call — this is the exact two-step flow the mainnet runbook above follows. Contract since deleted from the tree |
 | Sepolia dry-run deployer | `0xD7bFC3b9cc7184ea77B58F77314cdE7aEB8Fe532` | encrypted keystore `hippyghosts-sepolia-deployer`, password stored in plaintext file (fine — no mainnet-relevant value at risk) |
+| HippyGhostsDynamicMinter (test) | `0x9f06aF3aEd7f3c437780037F49d1d17A984B61CB` | the contract actually headed to mainnet; started at tokenId 1600 (previous minter's `nextTokenId`), minted 1600–1602, full flow verified incl. refund, per-wallet revert, withdraw, and exact on-chain decay |
 
 Full transaction records for these are in `broadcast/*/11155111/`.
