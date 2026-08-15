@@ -35,15 +35,39 @@ and changing one does not touch the other. `setAddresses` never touches `owner` 
 changing `owner` uses a separate function, `transferOwnership` (standard
 OpenZeppelin `Ownable`).
 
-### Current mainnet state (verified on-chain, 2026-08-15)
+### Current mainnet state (verified on-chain, 2026-08-15, post-rollout)
 
 ```
 HippyGhosts:      0x2a5503280d66A47DE0754ddc73252CA9a4e93dcb
   owner:           0xCA4F157682559551AC39b66be5766355DFE66EF9   (Gnosis Safe)
-  mintController:  0x6E4e27fE40cc66484Cf386535900fbE34899D3e8   (old priced HippyGhostsMinter)
+  mintController:  0xB567F4887B98162Ac19e0f3Cd529Fe919337bbf8   (HippyGhostsDynamicMinter — LIVE since 2026-08-15)
   renderer:        0x856bd414d7C4718f844795b30510AF2f5FEe2Ee1   (unchanged by this rollout)
   minted:          1500 / 9999  (tokenId 1–1500; 1501 confirmed NOT_MINTED)
+
+HippyGhostsDynamicMinter: 0xB567F4887B98162Ac19e0f3Cd529Fe919337bbf8
+  owner:           0xCA4F157682559551AC39b66be5766355DFE66EF9   (the Safe; deployer holds nothing)
+  nextTokenId:     1501
+  mintOpen:        false        <- mint NOT opened yet; Safe flips it via setMintOpen(true)
+  params:          floor 0 / bump 0.0001 ETH / decay 0.0000007 ETH per block / cap 0.08 ETH
+  Etherscan:       source verified
 ```
+
+Rollout record (all on 2026-08-15):
+- Deploy + transferOwnership tx: `0x1330b270e19760d3f7d3f3fff6a72b11b6ccf44a2f269e85daa2c1018d29605b`
+  + `0xc5eb775fa2a082742863e86952bd54baddf2964b839ce4f58dbfd560d37b0b9f`
+  (block 25761333, deployer `0x03793EB77F02B730B1842AFC4f4F66B8305F16a3`,
+  total 0.000093 ETH gas). Full record in `broadcast/DeployDynamicMinter.s.sol/1/`.
+- Safe executed `setAddresses(0x0, 0xB567F4887B98162Ac19e0f3Cd529Fe919337bbf8)`
+  via its UI; switch verified through two independent RPCs (Alchemy + publicnode).
+- App DB `chainconfig` (`chain_id=1`, `MintController`) updated to the new
+  address; confirmed live via `hippyghosts.io/api/chainconfig/1`.
+- Still pending: frontend mint UI (see step 6 below) and the Safe's
+  `setMintOpen(true)` (step 7 — the actual launch, timing is a product
+  decision).
+
+The pre-rollout state, for the record: `mintController` was
+`0x6E4e27fE40cc66484Cf386535900fbE34899D3e8` (the old priced HippyGhostsMinter,
+2022, public phase never opened).
 
 `owner` was originally the deploying EOA (`0x03793EB77F02B730B1842AFC4f4F66B8305F16a3`,
 same address for all four original contracts — see `deployments/mainnet/*.json`
