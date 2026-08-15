@@ -1,10 +1,17 @@
-# Mainnet Free Mint Rollout — Runbook & Notes
+# Mainnet Minter Swap — Runbook & Notes
 
-This doc captures the operational knowledge from switching HippyGhosts to a free
-mint: the ownership model (which confused everyone at least once — see below),
-why the deploy has to be split into two steps, the security practices we settled
-on, and the exact runbook for doing it. It's a living doc — update it as the
-rollout actually happens, and again if the minter ever gets swapped a second time.
+This doc captures the operational knowledge from switching HippyGhosts off the
+old priced minter: the ownership model (which confused everyone at least once —
+see below), why the deploy has to be split into two steps, the security
+practices we settled on, and the exact runbook for doing it. It's a living doc —
+update it as the rollout actually happens, and again if the minter ever gets
+swapped another time.
+
+The minter being rolled out is **`HippyGhostsDynamicMinter`** — free at the
+floor, demand-responsive surge pricing (see [contracts.md](./contracts.md) for
+the mechanism). It replaced an earlier, never-deployed `HippyGhostsFreeMinter`
+(pure free mint, deleted from the tree — see git history) after the project
+owner decided a demand-responsive price was the better mechanism.
 
 For contract architecture (what each contract does), see [contracts.md](./contracts.md).
 This doc is about the *process* of changing which minter is live, not the contracts
@@ -62,19 +69,20 @@ broadcast, which works fine on a testnet where the deploying EOA happens to
 also be the contract's `owner` (true on every fresh testnet deployment, false
 on mainnet). This was caught on review before ever touching mainnet — see the
 "Add HippyGhostsFreeMinter" and "Fix mainnet-unsafe deploy assumptions" commits.
-`script/DeployFreeMinter.s.sol` now only does step 1 (deploy + hand the new
+`script/DeployDynamicMinter.s.sol` now only does step 1 (deploy + hand the new
 minter's own ownership to `ADMIN_ADDRESS`); step 2 is always a separate,
 manual Safe transaction.
 
-## `HippyGhostsFreeMinter`'s own ownership is a third, unrelated thing
+## `HippyGhostsDynamicMinter`'s own ownership is a third, unrelated thing
 
-`HippyGhostsFreeMinter` is itself `Ownable` — its `owner` controls
-`setMintOpen`/`setMaxPerWallet` on *that* contract, and starts out as whichever
-EOA deploys it (standard `Ownable` behavior: `owner = msg.sender` at
-construction). Left alone, that means a throwaway deploy key would end up
-controlling the mint toggle — not what we want on mainnet.
+`HippyGhostsDynamicMinter` is itself `Ownable` — its `owner` controls
+`setMintOpen`/`setMaxPerWallet`/`withdraw` on *that* contract, and starts out
+as whichever EOA deploys it (standard `Ownable` behavior: `owner = msg.sender`
+at construction). Left alone, that means a throwaway deploy key would end up
+controlling the mint toggle and the collected ETH — not what we want on
+mainnet.
 
-`script/DeployFreeMinter.s.sol` requires an `ADMIN_ADDRESS` env var and calls
+`script/DeployDynamicMinter.s.sol` requires an `ADMIN_ADDRESS` env var and calls
 `minter.transferOwnership(ADMIN_ADDRESS)` in the same broadcast as the deploy,
 so by the time the deploy transaction is mined, the new minter's `owner` is
 already `ADMIN_ADDRESS` (the Safe, on mainnet) — never the deploying EOA. This
@@ -121,16 +129,28 @@ password themselves. Verification of the result (checking addresses, contract
 state, etc.) happens afterward via read-only on-chain calls, which need no
 password.
 
-## Runbook: switching mainnet to `HippyGhostsFreeMinter`
+## Runbook: switching mainnet to `HippyGhostsDynamicMinter`
 
-Preconditions (all satisfied as of 2026-08-15):
-- `HippyGhostsFreeMinter.sol` written, tested (34/34 passing:
-  `forge test`), and verified end-to-end on Sepolia with real transactions
-  (deploy, ownership handoff, mint-closed revert, successful mint, per-wallet
-  limit revert, and a full minter-to-minter handoff rehearsal).
-- `0x03793EB77F02B730B1842AFC4f4F66B8305F16a3` funded with mainnet ETH for gas.
+Preconditions:
+- `HippyGhostsDynamicMinter.sol` written, tested (41/41 passing: `forge test`,
+  22 of them covering this contract), and exercised end-to-end on a local
+  anvil node with real deployed instances (deploy, ownership handoff,
+  mint-closed revert, free mint at the floor, paid mint with refund, price
+  decay, withdraw).
+- **Still pending: a Sepolia rehearsal with real transactions** — the earlier
+  Sepolia run verified the superseded `HippyGhostsFreeMinter`, not this
+  contract. Do not deploy to mainnet before repeating the Sepolia rehearsal
+  with `HippyGhostsDynamicMinter`.
+- `0x03793EB77F02B730B1842AFC4f4F66B8305F16a3` funded with mainnet ETH for gas
+  (done 2026-08-15).
 - Its private key imported into a local encrypted keystore named
-  `mainnet-deployer`, address cross-checked against the value above.
+  `mainnet-deployer`, address cross-checked against the value above (done
+  2026-08-15).
+
+The price parameters (floor 0, bump 0.0001 ETH, decay 0.0000007 ETH/block,
+cap 0.08 ETH) are constants in `script/DeployDynamicMinter.s.sol`, not env
+vars — review them there before deploying; changing them later means
+deploying a new minter.
 
 Steps:
 
@@ -143,18 +163,19 @@ Steps:
    # then binary-search or scan ownerOf() near the expected boundary to confirm
    ```
 
-2. **Deploy `HippyGhostsFreeMinter`, handing ownership to the Safe** (run this
-   directly in a real terminal — it needs the keystore password interactively):
+2. **Deploy `HippyGhostsDynamicMinter`, handing ownership to the Safe** (run
+   this directly in a real terminal — it needs the keystore password
+   interactively):
    ```bash
    HIPPYGHOSTS_ADDRESS=0x2a5503280d66A47DE0754ddc73252CA9a4e93dcb \
    START_TOKEN_ID=<confirmed above> \
    ADMIN_ADDRESS=0xCA4F157682559551AC39b66be5766355DFE66EF9 \
-     forge script script/DeployFreeMinter.s.sol \
+     forge script script/DeployDynamicMinter.s.sol \
      --rpc-url <mainnet RPC> \
      --account mainnet-deployer \
      --broadcast
    ```
-   Note the deployed `HippyGhostsFreeMinter` address printed at the end.
+   Note the deployed `HippyGhostsDynamicMinter` address printed at the end.
 
 3. **Independently verify before touching the Safe** — read state from an RPC
    provider other than the one used to deploy, to rule out a stale/lying node:
@@ -183,11 +204,13 @@ Steps:
      serves this to the frontend.
    - Add the new minter's address + ABI to `lib/web3/contracts.ts` in
      `hippyghosts-app`.
-   - Build an actual `/mint` page wired to `mint(numberOfTokens)`,
-     `mintOpen()`, `maxPerWallet()`, `mintedCount(address)` — none of this
-     exists yet. Until it does, minting is only possible by calling the
-     contract directly (Etherscan's Write Contract tab, `cast send`, etc.),
-     not through hippyghosts.io.
+   - Build an actual `/mint` page wired to `mint(numberOfTokens)` (payable —
+     send `priceForNext(numberOfTokens)`, ideally with a small buffer since
+     the price can move between quote and inclusion; excess is refunded),
+     `currentPrice()`, `priceForNext(n)`, `mintOpen()`, `maxPerWallet()`,
+     `mintedCount(address)` — none of this exists yet. Until it does, minting
+     is only possible by calling the contract directly (Etherscan's Write
+     Contract tab, `cast send`, etc.), not through hippyghosts.io.
    - The old minter's signature-based mint API routes
      (`/api/mint/sign-mint-key` etc.) become dead code after the switch — not
      urgent to remove, just no longer meaningful.
@@ -198,12 +221,16 @@ Steps:
 
 ## Reversibility
 
-Switching back to a priced model later needs no changes to `HippyGhosts` or
-`HippyGhostsFreeMinter` — deploy a new minter contract with
-`startTokenId_ = <the retiring minter's current nextTokenId()>`, then repeat
-steps 2–6 above pointing at the new contract. This exact handoff (one minter's
-`nextTokenId()` feeding the next minter's constructor, with no collision or
-gap) was verified with real transactions on Sepolia.
+Changing the pricing later (different parameters, back to a fixed price,
+anything) needs no changes to `HippyGhosts` — deploy a new minter contract
+with `startTokenId_ = <the retiring minter's current nextTokenId()>`, then
+repeat steps 2–6 above pointing at the new contract, and finally have the
+Safe call `withdraw()` on the retiring minter to collect any remaining ETH.
+This exact handoff (one minter's `nextTokenId()` feeding the next minter's
+constructor, with no collision or gap) is covered by
+`testHandoffToNextMinterContinuesSequence` and was rehearsed with real
+transactions on Sepolia (with the superseded free minter; the mechanism is
+unchanged).
 
 ## Sepolia deployment records (for reference, not mainnet)
 
@@ -215,8 +242,8 @@ in case any of it needs re-running:
 |---|---|---|
 | HippyGhosts (test) | `0x7Da3a8B8c76Ca307FCda8cd071c7828E770732E6` | fresh deploy, unrelated to mainnet |
 | HippyGhostsRenderer (test) | `0x45eA432fde993B01CdBbeC554CeB2f30060e3374` | |
-| HippyGhostsFreeMinter (test, superseded) | `0x8963Ac6167abD0f10b56cBEb58ff8Df1008f4f72` | first deploy; owner was the test deployer itself |
-| HippyGhostsFreeMinter (test, handoff rehearsal) | `0xc424f0d63362ed0a239abda8aa11b53e1052c0e0` | owner transferred to a Safe stand-in (`0x…dEaD`), then connected via a separate `setAddresses` call — this is the exact two-step flow the mainnet runbook above follows |
+| HippyGhostsFreeMinter (test, superseded) | `0x8963Ac6167abD0f10b56cBEb58ff8Df1008f4f72` | first deploy; owner was the test deployer itself. Contract since deleted from the tree |
+| HippyGhostsFreeMinter (test, handoff rehearsal) | `0xc424f0d63362ed0a239abda8aa11b53e1052c0e0` | owner transferred to a Safe stand-in (`0x…dEaD`), then connected via a separate `setAddresses` call — this is the exact two-step flow the mainnet runbook above follows. Contract since deleted from the tree |
 | Sepolia dry-run deployer | `0xD7bFC3b9cc7184ea77B58F77314cdE7aEB8Fe532` | encrypted keystore `hippyghosts-sepolia-deployer`, password stored in plaintext file (fine — no mainnet-relevant value at risk) |
 
 Full transaction records for these are in `broadcast/*/11155111/`.

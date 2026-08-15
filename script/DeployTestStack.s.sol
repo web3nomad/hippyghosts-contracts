@@ -8,7 +8,7 @@ pragma solidity 0.8.11;
  * project was previously deployed to besides mainnet) has been shut down since
  * 2022, so every testnet deployment starts from zero. The old priced
  * HippyGhostsMinter is intentionally not deployed here — this stack exists only to
- * give DeployFreeMinter.s.sol something to attach to.
+ * give DeployDynamicMinter.s.sol something to attach to.
  */
 
 import "forge-std/Script.sol";

@@ -87,6 +87,33 @@ Price examples (for a token from epoch 1):
 | Epoch 4 | 0.12 ETH |
 | Epoch 5+ | 0.08 ETH (floor) |
 
+### HippyGhostsDynamicMinter.sol — Demand-Responsive Minting (2026, not yet on mainnet)
+
+The replacement for `HippyGhostsMinter`, intended to open the remaining supply
+(tokenIds 1501–9999). Pricing works like a base fee (EIP-1559) / linear VRGDA:
+
+- **Floor**: price decays back to `floorPrice` (0 — a free mint in quiet times).
+- **Bump**: every minted token raises the price by `priceBump`.
+- **Decay**: the price falls by `decayPerBlock` each block while nobody mints.
+- **Cap**: never exceeds `maxPrice`.
+
+The sustainable free rate is `decayPerBlock / priceBump` tokens per block —
+mint slower than that and it stays free; a demand spike prices itself, then
+drifts back to the floor. This also makes sybil sweeps of the free supply
+self-defeating: the sweep drives the price up under the sweeper.
+
+All price parameters are immutable constructor arguments (the deployed values
+live in `script/DeployDynamicMinter.s.sol`): the pricing rule is a public
+commitment, and changing it means deploying a new minter via the swap
+mechanism below. Operational switches stay adjustable by the owner:
+`setMintOpen(bool)`, `setMaxPerWallet(uint256)` (default 3), plus
+`withdraw()` for collected ETH.
+
+Mints are sequential from a `startTokenId_` constructor argument;
+`nextTokenId` is public so a future minter can resume exactly where this one
+stops. `mint(numberOfTokens)` is payable — frontends send
+`priceForNext(numberOfTokens)` (excess refunded, shortfall reverts).
+
 ### SignatureVerification.sol — Signature Library
 
 Standard ECDSA verification using OpenZeppelin's library:
@@ -211,11 +238,13 @@ Saved in `deployments/<network>/` as JSON files containing addresses, ABIs, and 
 
 - `setPublicMintStartBlock(blockNumber)` — manually called to open public sale at a chosen time.
 
-### Switching to a New Minter (Free Mint and Beyond)
+### Switching to a New Minter
 
 `HippyGhosts.mintController` can be repointed at any time by the contract owner
 via `setAddresses`, so the minting mechanism can change without touching
-`HippyGhosts` itself. For the ownership model this depends on, why the deploy
+`HippyGhosts` itself — this is how `HippyGhostsDynamicMinter` replaces the old
+priced minter, and how any future pricing change would land. For the ownership
+model this depends on, why the deploy
 must be split into two separate transactions on mainnet, and the exact runbook,
 see **[mainnet-deploy-runbook.md](./mainnet-deploy-runbook.md)**.
 
