@@ -211,6 +211,14 @@ Saved in `deployments/<network>/` as JSON files containing addresses, ABIs, and 
 
 - `setPublicMintStartBlock(blockNumber)` — manually called to open public sale at a chosen time.
 
+### Switching to a New Minter (Free Mint and Beyond)
+
+`HippyGhosts.mintController` can be repointed at any time by the contract owner
+via `setAddresses`, so the minting mechanism can change without touching
+`HippyGhosts` itself. For the ownership model this depends on, why the deploy
+must be split into two separate transactions on mainnet, and the exact runbook,
+see **[mainnet-deploy-runbook.md](./mainnet-deploy-runbook.md)**.
+
 ---
 
 ## Modernization Notes
